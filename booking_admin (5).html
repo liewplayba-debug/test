@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>筋夾！？皮洽鬆？ · 後台管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#B8955A;--gold-light:#D4B483;--gold-pale:#F5EDD8;--ink:#1A1814;--ink-soft:#3D3830;--stone:#7A7168;--stone-light:#ADA49B;--cream:#FAF7F2;--cream-dark:#F0EBE0;--white:#FFFFFF;--red-soft:#C0392B;--red-pale:#FCEAEA;--green-soft:#27AE60;--green-pale:#E8F5EE;--blue-pale:#EAF2FB;--border:rgba(184,149,90,0.25);--border-light:rgba(184,149,90,0.12);--shadow:0 2px 20px rgba(26,24,20,0.06);--shadow-md:0 4px 32px rgba(26,24,20,0.10);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh;}
+.top-nav{background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(184,149,90,0.3);min-height:54px;flex-wrap:wrap;gap:8px;}
+.brand-en{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--gold-light);letter-spacing:0.06em;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.tab-btn{padding:6px 16px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(184,149,90,0.4);background:transparent;color:var(--gold-light);font-family:'Noto Sans TC',sans-serif;transition:all 0.2s;}
+.tab-btn.active{background:var(--gold);color:var(--ink);border-color:var(--gold);}
+.live-indicator{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green-soft);font-weight:500;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green-soft);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.page{padding:24px 32px;max-width:1200px;margin:0 auto;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:var(--shadow);}
+.card-title{font-size:12px;font-weight:500;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border-light);}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:15px 17px;box-shadow:var(--shadow);}
+.stat-label{font-size:11px;color:var(--stone);letter-spacing:0.10em;margin-bottom:6px;text-transform:uppercase;}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--ink);line-height:1;}
+.stat-sub{font-size:11px;color:var(--stone-light);margin-top:4px;}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;}
+.filter-btn{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--cream);color:var(--stone);font-family:'Noto Sans TC',sans-serif;transition:all 0.2s;}
+.filter-btn.active{background:var(--ink);color:var(--gold-light);border-color:var(--ink);}
+.day-tabs{display:flex;border-bottom:1px solid var(--border);}
+.day-tab{padding:9px 16px;font-size:13px;cursor:pointer;color:var(--stone);border-bottom:2px solid transparent;transition:all 0.2s;font-family:'Noto Sans TC',sans-serif;white-space:nowrap;}
+.day-tab:hover{color:var(--ink);}
+.day-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:500;}
+.schedule-wrap{overflow-x:auto;}
+.schedule-grid{display:grid;min-width:720px;gap:3px;}
+.sg-header{padding:8px 4px;text-align:center;font-weight:500;color:var(--stone);font-size:11px;letter-spacing:0.06em;}
+.sg-time{font-size:10px;color:var(--stone);text-align:right;padding-right:8px;display:flex;align-items:center;justify-content:flex-end;white-space:nowrap;}
+.sg-cell{border-radius:6px;padding:5px 3px;text-align:center;font-size:11px;line-height:1.3;min-height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.sg-cell.free{background:var(--green-pale);color:#1A6B3A;border:1px solid rgba(39,174,96,0.2);}
+.sg-cell.booked{background:var(--red-pale);color:#922B21;border:1px solid rgba(192,57,43,0.18);}
+.sg-client{font-weight:500;font-size:11px;}
+.sg-parts{font-size:9px;margin-top:2px;opacity:0.85;}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table th{text-align:left;padding:9px 11px;font-size:11px;font-weight:500;letter-spacing:0.08em;color:var(--stone);border-bottom:1px solid var(--border);background:var(--cream);}
+.data-table td{padding:10px 11px;border-bottom:1px solid var(--border-light);color:var(--ink-soft);vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--cream);}
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:500;}
+.badge-paid{background:var(--green-pale);color:#1A6B3A;}
+.badge-unpaid{background:var(--red-pale);color:#922B21;}
+.badge-online{background:var(--blue-pale);color:#1A5276;}
+.badge-walkin{background:var(--gold-pale);color:var(--ink-soft);}
+.badge-manual{background:#F4EAFB;color:#5A2D82;}
+.badge-part{background:var(--cream-dark);color:var(--stone);padding:2px 7px;border-radius:8px;font-size:11px;margin:1px;display:inline-block;}
+.btn-primary{background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);padding:10px 22px;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;font-weight:500;transition:all 0.2s;}
+.btn-primary:hover{background:var(--ink-soft);}
+.btn-sm-success{background:var(--green-soft);color:#fff;border:none;padding:5px 10px;border-radius:6px;font-size:11px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
+.btn-sm-neutral{background:transparent;color:var(--stone);border:1px solid var(--border);padding:5px 10px;border-radius:6px;font-size:11px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
+/* 服務人員排班編輯器 */
+.th-editor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.th-editor-card{border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--cream);}
+.th-name-input{border:none;background:transparent;font-size:13px;font-weight:500;font-family:'Noto Sans TC',sans-serif;color:var(--ink);padding:0;width:100%;outline:none;border-bottom:1px dashed var(--border);margin-bottom:8px;}
+.day-checks{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.day-check{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--stone);cursor:pointer;}
+.day-check input{accent-color:var(--gold);cursor:pointer;}
+/* 現場報名 */
+.walkin-layout{display:grid;grid-template-columns:360px 1fr;gap:22px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:12px;color:var(--stone);letter-spacing:0.06em;font-weight:500;}
+.required::after{content:' *';color:var(--gold);}
+input[type=text],input[type=tel],select{border:1px solid var(--border);border-radius:8px;padding:9px 13px;font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--ink);background:var(--cream);outline:none;width:100%;transition:border-color 0.2s;}
+input:focus,select:focus{border-color:var(--gold);background:var(--white);}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23B8955A' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;background-color:var(--cream);}
+.parts-group{display:flex;gap:8px;flex-wrap:wrap;}
+.part-btn{padding:7px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:13px;color:var(--stone);cursor:pointer;transition:all 0.2s;background:var(--cream);user-select:none;}
+.part-btn:hover{border-color:var(--gold-light);}
+.part-btn.selected{border-color:var(--gold);background:var(--gold-pale);color:var(--ink-soft);font-weight:500;}
+.toggle-group{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--cream);}
+.toggle-btn{flex:1;padding:8px;text-align:center;cursor:pointer;font-size:12px;color:var(--stone);border:none;background:transparent;font-family:'Noto Sans TC',sans-serif;transition:all 0.2s;}
+.toggle-btn.active{background:var(--ink);color:var(--gold-light);font-weight:500;}
+.slots-grid{display:grid;gap:5px;}
+.slot-row{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;}
+.slot-time-label{font-size:12px;color:var(--stone);text-align:right;padding-right:4px;font-weight:500;}
+.slot-btn{padding:8px 10px;border-radius:8px;text-align:center;font-size:12px;cursor:pointer;border:1.5px solid;transition:all 0.15s;user-select:none;}
+.slot-btn.available{border-color:rgba(39,174,96,0.35);background:var(--green-pale);color:#1A6B3A;}
+.slot-btn.available:hover{background:#D1EFE0;}
+.slot-btn.selected{border-color:var(--gold);background:var(--gold-pale);color:var(--ink);font-weight:500;}
+.slot-btn.booked{border-color:rgba(192,57,43,0.22);background:var(--red-pale);color:#922B21;cursor:not-allowed;font-size:11px;}
+.section-divider{height:1px;background:var(--border-light);margin:14px 0;}
+/* 連線設定 */
+.setup-bar{background:rgba(184,149,90,0.12);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--stone);}
+.setup-bar input[type=url]{flex:1;min-width:200px;font-size:12px;}
+.btn-setup{background:var(--gold);color:var(--ink);border:none;padding:7px 14px;border-radius:7px;font-size:12px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;font-weight:500;white-space:nowrap;}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:var(--stone-light);flex-shrink:0;}
+.conn-dot.ok{background:var(--green-soft);}
+.conn-dot.err{background:var(--red-soft);}
+.manual-table{width:100%;border-collapse:collapse;font-size:13px;}
+.manual-table th{text-align:left;padding:8px 10px;font-size:11px;color:var(--stone);border-bottom:1px solid var(--border);font-weight:500;}
+.manual-table td{padding:10px 10px;border-bottom:1px solid var(--border-light);color:var(--ink-soft);vertical-align:middle;}
+.manual-table tr:hover td{background:var(--cream);}
+.loading-overlay{position:fixed;inset:0;background:rgba(26,24,20,0.4);display:none;align-items:center;justify-content:center;z-index:9000;}
+.loading-box{background:var(--white);border-radius:12px;padding:24px 32px;text-align:center;}
+.loading-spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 10px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);border-radius:10px;padding:12px 22px;font-size:13px;z-index:9999;transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+@media(max-width:1024px){.walkin-layout{grid-template-columns:1fr}}
+@media(max-width:768px){.stats-row{grid-template-columns:1fr 1fr}.page{padding:16px}.walkin-layout{grid-template-columns:1fr}}
+@media(max-width:480px){.stats-row{grid-template-columns:1fr 1fr}.page{padding:12px}.schedule-grid{min-width:0!important}.sg-time{font-size:9px;padding-right:4px}.sg-cell{font-size:10px;padding:3px 1px}.sg-header{font-size:10px}.data-table{font-size:11px}.data-table th,.data-table td{padding:6px 6px}}
+/* 排班表格響應式 */
+.th-editor-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
+.th-editor-table-wrap table{width:100%;min-width:560px;table-layout:fixed;}
+.th-editor-table-wrap table th:first-child,.th-editor-table-wrap table td:first-child{width:60px;}
+.th-editor-table-wrap table th:nth-child(2),.th-editor-table-wrap table td:nth-child(2){width:55px;}
+.th-editor-table-wrap table th:nth-child(n+3),.th-editor-table-wrap table td:nth-child(n+3){width:calc((100% - 115px) / 5);}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="brand-en" id="brand-en">筋夾！？皮洽鬆？ · 後台管理</span>
+  <div class="nav-right">
+    <button class="tab-btn active" onclick="switchTab('admin',this)">後台總覽</button>
+    <button class="tab-btn" onclick="switchTab('walkin',this)">現場報名</button>
+    <button class="tab-btn" onclick="switchTab('cashflow',this)">收支</button>
+    <span class="live-indicator"><span class="live-dot"></span>即時</span>
+    <span style="font-size:11px;color:rgba(255,255,255,0.35);">(<span id="refresh-countdown">30</span>s)</span>
+    <button onclick="loadData()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(184,149,90,0.4);color:var(--gold-light);padding:6px 12px;border-radius:7px;font-size:12px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">重新整理</button>
+  </div>
+</nav>
+
+<div class="loading-overlay" id="lo" style="display:none;"><div class="loading-box"><div class="loading-spinner"></div><div style="font-size:13px;color:var(--stone);" id="lo-text">載入中...</div></div></div>
+<div class="toast" id="toast"></div>
+
+<!-- 登入密碼遮罩 -->
+<div id="login-overlay" style="position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:var(--white);border-radius:16px;padding:36px 40px;text-align:center;width:320px;box-shadow:var(--shadow-md);">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:4px;letter-spacing:0.04em;">後台管理</div>
+    <div style="font-size:12px;color:var(--stone);margin-bottom:24px;letter-spacing:0.06em;">筋夾！？皮洽鬆？</div>
+    <input type="password" id="login-input" maxlength="20"
+      placeholder="請輸入密碼"
+      style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:13px;font-size:20px;text-align:center;letter-spacing:0.4em;font-family:'Noto Sans TC',sans-serif;background:var(--cream);outline:none;margin-bottom:14px;"
+      onkeydown="if(event.key==='Enter')checkLogin()">
+    <div id="login-err" style="font-size:12px;color:var(--red-soft);margin-bottom:12px;min-height:18px;"></div>
+    <button onclick="checkLogin()" style="width:100%;background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);padding:12px;border-radius:8px;font-size:14px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;font-weight:500;">進入後台</button>
+  </div>
+</div>
+
+<div class="page">
+  <!-- 連線設定 -->
+  <div class="setup-bar" id="setup-bar">
+    <span class="conn-dot" id="conn-dot"></span>
+    <span style="white-space:nowrap;font-size:12px;">Apps Script 網址：</span>
+    <input type="url" id="url-input" placeholder="https://script.google.com/macros/s/.../exec">
+    <button class="btn-setup" onclick="saveUrl()">儲存連線</button>
+    <span id="conn-text" style="font-size:12px;color:var(--stone-light);">未連線</span>
+  </div>
+
+  <!-- 後台總覽 -->
+  <div class="tab-content active" id="tab-admin">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:0.04em;">後台管理</div>
+        <div style="font-size:13px;color:var(--stone);">即時預約總覽、繳費管理</div>
+      </div>
+    </div>
+    <div class="stats-row" id="admin-stats"></div>
+
+    <!-- 服務人員排班設定 -->
+    <div class="card">
+      <div class="card-title">服務人員排班設定</div>
+      <div style="font-size:12px;color:var(--stone);margin-bottom:14px;">可修改服務人員姓名，並勾選每天是否排班。更改後點「儲存排班」。</div>
+      <div id="th-editor" style="width:100%;"></div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;">
+        <button class="btn-primary" onclick="saveTh()">儲存排班</button>
+      </div>
+    </div>
+
+    <!-- 時段總覽 -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div class="card-title" style="margin:0;">服務人員時段總覽</div>
+        <!-- 日期分頁由 JS 依 DAYS 自動產生，不要手動寫死 -->
+        <div class="day-tabs" style="border:none;" id="admin-day-tabs"></div>
+      </div>
+      <div class="schedule-wrap"><div class="schedule-grid" id="adm-sched"></div></div>
+    </div>
+
+    <!-- 預約名單 -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+        <div class="card-title" style="margin:0;">預約名單</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button onclick="copyPayReminder()" style="background:var(--gold-pale);border:1px solid var(--gold);color:var(--ink-soft);padding:6px 12px;border-radius:7px;font-size:12px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;">📋 複製繳費提醒</button>
+          <div class="filter-bar" id="adm-filter-bar">
+          <div class="filter-btn active" onclick="filterAdm('all',this)">全部</div>
+          <div class="filter-btn" onclick="filterAdm('unpaid',this)">未繳費</div>
+          <div class="filter-btn" onclick="filterAdm('online',this)">線上</div>
+          <div class="filter-btn" onclick="filterAdm('walkin',this)">現場</div>
+          <div class="filter-btn" onclick="filterAdm('ext',this)">續時</div>
+        </div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <input type="text" id="adm-search" placeholder="🔍 搜尋傳情人或被傳情人姓名…" oninput="renderAdmTable()" style="width:100%;max-width:320px;border:1px solid var(--border);border-radius:8px;padding:8px 13px;font-size:13px;font-family:'Noto Sans TC',sans-serif;background:var(--cream);outline:none;">
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>傳情人</th><th>被傳情人</th><th>部位</th><th>服務人員/床</th><th>日期</th><th>時段</th><th>金額</th><th>打卡</th><th>繳費</th><th>類型</th><th>操作</th></tr></thead>
+          <tbody id="adm-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 繳費彙整 -->
+    <div class="card"><div class="card-title">繳費彙整</div><div id="payment-summary"></div></div>
+  </div>
+
+  <!-- 現場報名 -->
+  <div class="tab-content" id="tab-walkin">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:0.04em;margin-bottom:3px;">現場報名</div>
+    <div style="font-size:13px;color:var(--stone);margin-bottom:20px;">選擇日期後再選服務員與時段，即時同步所有系統</div>
+    <div class="walkin-layout">
+      <div>
+        <div class="card">
+          <div class="card-title">快速登記</div>
+          <div style="display:flex;flex-direction:column;gap:11px;">
+            <div class="form-group"><label class="required">傳情人姓名</label><input type="text" id="wi-booker" placeholder="姓名"></div>
+            <div class="form-group"><label class="required">系級</label><input type="text" id="wi-dept" placeholder="例：物治115"></div>
+            <div class="form-group"><label class="required">聯絡電話</label><input type="tel" id="wi-phone" placeholder="09XX-XXX-XXX"></div>
+            <div class="form-group"><label class="required">被傳情人姓名</label><input type="text" id="wi-recipient" placeholder="被傳情人姓名"></div>
+            <div class="form-group">
+              <label class="required">放鬆部位（可多選）</label>
+              <div class="parts-group" id="wi-parts">
+                <div class="part-btn" onclick="this.classList.toggle('selected');updateWiPrice();if(wiThBed)renderWiSlots();">上肢</div>
+                <div class="part-btn" onclick="this.classList.toggle('selected');updateWiPrice();if(wiThBed)renderWiSlots();">下肢</div>
+                <div class="part-btn" onclick="this.classList.toggle('selected');updateWiPrice();if(wiThBed)renderWiSlots();">背部</div>
+                <div class="part-btn" onclick="this.classList.toggle('selected');updateWiPrice();if(wiThBed)renderWiSlots();">肩頸</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="required">日期</label>
+              <!-- 日期由 JS 依 DAYS 自動產生，不要手動寫死 -->
+              <div class="filter-bar" id="wi-day-tabs" style="margin:0;"></div>
+            </div>
+            <div class="form-group">
+              <label class="required">時段</label>
+              <div class="toggle-group" id="wi-seg-toggle">
+                <button class="toggle-btn active" onclick="selWiSeg('19-20',this)">19:00—20:00（前段）</button>
+                <button class="toggle-btn" onclick="selWiSeg('20-21',this)">20:00—21:00（後段）</button>
+              </div>
+            </div>
+            <div class="form-group"><label class="required">服務人員</label><select id="wi-therapist" onchange="wiSlots=[];renderWiSlots()"><option value="">— 請先選擇日期與時段 —</option></select></div>
+            <div class="form-group">
+              <label>聯絡方式</label>
+              <div class="contact-opts" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px;">
+                <div class="contact-opt selected" data-m="fb" onclick="setWiContact('fb',this)" style="border:1.5px solid var(--gold);border-radius:8px;padding:9px 8px;cursor:pointer;text-align:center;font-size:12px;background:var(--gold-pale);">Facebook<div style="font-size:10px;color:var(--stone-light);margin-top:2px;">Messenger 通知</div></div>
+                <div class="contact-opt" data-m="line" onclick="setWiContact('line',this)" style="border:1.5px solid var(--border);border-radius:8px;padding:9px 8px;cursor:pointer;text-align:center;font-size:12px;background:var(--cream);">LINE<div style="font-size:10px;color:var(--stone-light);margin-top:2px;">工作人員通知</div></div>
+                <div class="contact-opt" data-m="gmail" onclick="setWiContact('gmail',this)" style="border:1.5px solid var(--border);border-radius:8px;padding:9px 8px;cursor:pointer;text-align:center;font-size:12px;background:var(--cream);">Gmail<div style="font-size:10px;color:var(--stone-light);margin-top:2px;">自動發送通知信</div></div>
+              </div>
+              <div id="wi-account-fb" style="margin-top:8px;">
+                <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">被傳情人 Facebook 連結（當天現場報名可填 o）</label>
+                <input type="text" id="wi-contact-account-fb" placeholder="https://facebook.com/...">
+              </div>
+              <div id="wi-account-line" style="display:none;margin-top:8px;">
+                <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">被傳情人 LINE ID（當天現場報名可填 o）</label>
+                <input type="text" id="wi-contact-account-line" placeholder="LINE ID">
+              </div>
+              <div id="wi-account-gmail" style="display:none;margin-top:8px;">
+                <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">被傳情人 Email（當天現場報名可填 o）</label>
+                <input type="text" id="wi-contact-account-gmail" placeholder="email@example.com">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>FB / IG 打卡折扣</label>
+              <div class="toggle-group">
+                <button class="toggle-btn" onclick="setWiCk(false,this)">不打卡</button>
+                <button class="toggle-btn active" onclick="setWiCk(true,this)">打卡（每部位 -$5）</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="position:sticky;top:60px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="card-title" style="margin:0;">可用時段</div>
+            <span class="live-indicator"><span class="live-dot"></span>即時</span>
+          </div>
+          <div id="wi-slots"><div style="color:var(--stone-light);font-size:13px;">請先選擇日期與服務員</div></div>
+          <div class="section-divider"></div>
+          <div id="wi-price" style="font-size:13px;color:var(--stone);margin-bottom:10px;"></div>
+          <div id="wi-sel-display" style="font-size:13px;color:var(--gold);margin-bottom:14px;font-weight:500;"></div>
+          <button class="btn-primary" onclick="submitWalkin()" style="width:100%;">確認現場預約</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 收支 -->
+  <div class="tab-content" id="tab-cashflow">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:0.04em;margin-bottom:3px;">收支結算</div>
+    <div style="font-size:12px;color:var(--stone);margin-bottom:20px;">每段結束後填寫，系統自動寫入試算表</div>
+
+    <!-- 初始金額設定 -->
+    <div class="card" id="cf-init-card">
+      <div class="card-title">初始備用金</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;">
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">活動開始前的備用金（NT$）</label>
+          <input type="number" id="cf-init" placeholder="200" min="0" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--cream);font-family:'Noto Sans TC',sans-serif;outline:none;">
+        </div>
+        <button onclick="saveCfInit()" style="padding:9px 20px;background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-top:16px;">儲存</button>
+      </div>
+    </div>
+
+    <!-- 結算表單 -->
+    <div class="card">
+      <div class="card-title">新增結算</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">日期</label>
+          <div id="cf-day-tabs" style="display:flex;gap:6px;flex-wrap:wrap;">
+            <div class="filter-btn active" onclick="setCfDay(0,this)">5/4</div>
+            <div class="filter-btn" onclick="setCfDay(1,this)">5/5</div>
+            <div class="filter-btn" onclick="setCfDay(2,this)">5/6</div>
+            <div class="filter-btn" onclick="setCfDay(3,this)">5/7</div>
+            <div class="filter-btn" onclick="setCfDay(4,this)">5/8</div>
+            <div class="filter-btn" onclick="setCfDay(5,this)">5/11</div>
+            <div class="filter-btn" onclick="setCfDay(6,this)">5/12</div>
+            <div class="filter-btn" onclick="setCfDay(7,this)">5/13</div>
+            <div class="filter-btn" onclick="setCfDay(8,this)">5/14</div>
+            <div class="filter-btn" onclick="setCfDay(9,this)">5/15</div>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">時段</label>
+          <div id="cf-seg-tabs" style="display:flex;gap:6px;flex-wrap:wrap;">
+            <div class="filter-btn active" onclick="setCfSeg('1200-1300',this)">12:00—13:00</div>
+            <div class="filter-btn" onclick="setCfSeg('1700-1800',this)">17:00—18:00</div>
+            <div class="filter-btn" onclick="setCfSeg('1900-2000',this)">19:00—20:00</div>
+            <div class="filter-btn" onclick="setCfSeg('2000-2100',this)">20:00—21:00</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">錢袋總和（NT$）<span style="color:var(--stone-light);">（累計）</span></label>
+          <input type="number" id="cf-bag" placeholder="0" min="0" oninput="calcCf()" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--cream);font-family:'Noto Sans TC',sans-serif;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">打卡張數（NT$60/張）</label>
+          <input type="number" id="cf-ck" placeholder="0" min="0" oninput="calcCf()" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--cream);font-family:'Noto Sans TC',sans-serif;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">無打卡張數（NT$65/張）</label>
+          <input type="number" id="cf-nock" placeholder="0" min="0" oninput="calcCf()" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--cream);font-family:'Noto Sans TC',sans-serif;outline:none;">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">退費金額（NT$）</label>
+          <input type="number" id="cf-refund" placeholder="0" min="0" oninput="calcCf()" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--cream);font-family:'Noto Sans TC',sans-serif;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--stone);display:block;margin-bottom:4px;">備注</label>
+          <input type="text" id="cf-note" placeholder="（選填）" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--cream);font-family:'Noto Sans TC',sans-serif;outline:none;">
+        </div>
+      </div>
+      <!-- 即時計算 -->
+      <div id="cf-calc" style="background:var(--cream-dark);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px;display:none;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:var(--stone);">預期收入（60×打卡 + 65×無打卡）</span><span id="cf-expected">NT$0</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:var(--stone);">本段淨收益（錢袋總和 − 上段錢袋）</span><span id="cf-net">NT$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-weight:500;border-top:1px solid var(--border);padding-top:6px;margin-top:4px;"><span>差異（淨收益 − 預期）</span><span id="cf-diff" style="color:var(--green-soft);">NT$0</span></div>
+      </div>
+      <button onclick="submitCashflow()" style="width:100%;padding:11px;background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);border-radius:8px;font-size:14px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;">寫入收支記錄</button>
+    </div>
+
+    <!-- 收支歷史 -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="card-title" style="margin:0;">收支記錄</div>
+        <button onclick="loadCashflow()" style="padding:6px 14px;background:var(--cream);border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;color:var(--ink-soft);">重新載入</button>
+      </div>
+      <div id="cf-history">載入中...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ================================================================
+// ⚙️ 設定區 — 所有需要修改的內容都在這裡
+// ================================================================
+
+// 【必填】後台登入密碼
+const ADMIN_PASSWORD = 'NCKUPT';
+
+// 【必填】安全密鑰，必須與 Apps Script 裡的 SECRET_KEY 一致
+const SECRET_KEY = 'DCPT116';
+
+// 【活動資訊】
+const CFG = {
+  activityName:  '筋夾！？皮洽鬆？',
+  price:         65,     // 每部位價格（NT$）
+  discount:      5,      // 打卡折扣（NT$）
+  slotMin:       10,     // 每時段分鐘數
+  dates:         '5/11(一) — 5/15(五)',
+  time:          '19:00—21:00',
+  location:      '醫學院 104 多功能實習教室',
+};
+
+// 同步標題：改上面的 CFG.activityName 即可，導覽列與分頁標題會一起更新
+(function(){
+  const SUFFIX = ' · 後台管理';
+  document.title = CFG.activityName + SUFFIX;
+  const be = document.getElementById('brand-en');
+  if (be) be.textContent = CFG.activityName + SUFFIX;
+})();
+
+// ================================================================
+
+// ★【活動日期 — 整個系統只需改這一行】每年沿用時改這裡即可。
+//   格式：'月/日(週)'。上方日期分頁、下方排班表頭都會自動跟著變。
+const DAYS=['5/11(一)','5/12(二)','5/13(三)','5/14(四)','5/15(五)'];
+const PRICE=CFG.price,DISC=CFG.discount;
+const SEGS=['19-20','20-21'];
+const SEG_LABEL={'19-20':'前段 19—20','20-21':'後段 20—21'};
+function buildSlots(){const s=[];let h=19,m=0;for(let i=0;i<10;i++){const st=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;let eh=h,em=m+12;if(em>=60){eh++;em-=60;}s.push(`${st}-${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`);m+=12;if(m>=60){h++;m-=60;}}return s;}
+const ALL_SLOTS=buildSlots();
+const SLOTS_BY_SEG={'19-20':ALL_SLOTS.slice(0,5),'20-21':ALL_SLOTS.slice(5,10)};
+const BEDS=['A','B','C','D','E'];
+
+function isAuthed(){return sessionStorage.getItem('adminAuth')==='1';}
+
+function checkLogin(){
+  const v=document.getElementById('login-input').value.trim();
+  if(v===String(ADMIN_PASSWORD)){
+    document.getElementById('login-overlay').style.display='none';
+    sessionStorage.setItem('adminAuth','1');
+    if(SCRIPT_URL)loadData();          // 登入後才開始連線載入
+  }else if(v.length>=1){
+    document.getElementById('login-err').textContent='密碼錯誤，請重試';
+    document.getElementById('login-input').value='';
+    document.getElementById('login-input').focus();
+  }
+}
+
+// 若同一瀏覽器分頁已登入，跳過密碼
+if(sessionStorage.getItem('adminAuth')==='1'){
+  document.getElementById('login-overlay').style.display='none';
+}
+
+// ↓↓↓ 把你的 Apps Script 網址貼在這裡可以省去每次輸入（選填）↓↓↓
+let SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrxTlaoBOVqh-EIJovrnqZL0UQ7wd-9ksaqewEGyVI7lWiwRuwCJEHkFFQZGSKPzFU6g/exec';
+// ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+// schedule[dayIdx] = {bed: {segment: {name, gender}}}
+let schedule=[],rawGrid=[],bookings=[];
+let admDay=0,admFilter='all';
+let wiDay=0,wiSeg='19-20',wiThBed=null,wiCk=true;
+
+function saveUrl(){
+  const v=document.getElementById('url-input').value.trim();
+  if(!v){showToast('請先貼上 Apps Script 網址');return;}
+  SCRIPT_URL=v;
+  localStorage.setItem('adminScriptUrl',v);
+  loadData();
+}
+async function loadData(){
+  if(!SCRIPT_URL)return;
+  setConn('loading','連線中...');showLo('載入資料...');
+  try{
+    const[bRes,tRes]=await Promise.all([apiFetch('getBookings'),apiFetch('getTherapists')]);
+    if(bRes?.bookings)bookings=parseBk(bRes.bookings);
+    if(tRes?.schedule)schedule=tRes.schedule;
+    if(tRes?.rawGrid)rawGrid=tRes.rawGrid;
+    setConn('ok','已連線');
+    document.getElementById('setup-bar').style.borderColor='rgba(39,174,96,0.4)';
+    renderAll();
+  }catch(e){setConn('err','連線失敗：請確認網址');hideLo();}
+  hideLo();
+}
+function apiFetch(a){return fetch(`${SCRIPT_URL}?action=${a}`).then(r=>r.json());}
+function apiPost(d){return fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({...d,secret:SECRET_KEY})}).then(r=>r.json()).catch(()=>null);}
+function parseBk(arr){return arr.map(b=>({
+  id:b['編號'],booker:b['傳情人'],bookerDept:b['系級']||'',bookerPhone:b['電話']||'',
+  bookerFb:b['傳情人FB']||'',recipient:b['被傳情人'],
+  recipientFb:b['被傳情人FB']||'',
+  parts:typeof b['部位']==='string'?b['部位'].split(',').filter(Boolean):(b['部位']||[]),
+  therapistName:b['服務人員名稱']||'',therapistGender:b['性別']||'',
+  bed:b['床位']||'',segment:b['時段區間']||'',
+  dayIdx:parseInt(b['日期索引'])||0,time:b['時段'],
+  amount:parseInt(b['金額'])||0,checkin:b['打卡折扣']==='Y',
+  payment:b['繳費狀態']||'unpaid',contactMethod:b['聯絡方式']||'fb',
+  contactAccount:b['聯絡帳號']||'',
+  notified:b['已通知']==='Y',type:b['類型']||'online',notes:b['備注']||''
+}));}
+function setConn(s,t){document.getElementById('conn-dot').className='conn-dot'+(s==='ok'?' ok':s==='err'?' err':'');document.getElementById('conn-text').textContent=t;}
+function showLo(t){document.getElementById('lo-text').textContent=t;document.getElementById('lo').style.display='flex';}
+function hideLo(){document.getElementById('lo').style.display='none';}
+function showToast(msg,d=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
+
+function switchTab(tab,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  el.classList.add('active');
+  if(tab==='walkin')updateWiThOpts();
+  if(tab==='cashflow'){
+    const saved=localStorage.getItem('cf_init_'+SCRIPT_URL);
+    if(saved){cfPrevBag=parseInt(saved)||0;document.getElementById('cf-init').value=saved;}
+    loadCashflow();
+  }
+}
+
+// ── 查詢工具 ─────────────────────────────────────────────────
+function getTHforDaySeg(dayIdx,seg){
+  const dayMap=schedule[dayIdx]||{};
+  return Object.entries(dayMap)
+    .filter(([,segs])=>segs[seg])
+    .map(([bed,segs])=>({bed,segment:seg,...segs[seg]}));
+}
+function getBkSlots(bed,seg,dayIdx){return bookings.filter(b=>b.bed===bed&&b.segment===seg&&b.dayIdx===dayIdx).map(b=>b.time);}
+function getBkForSlot(bed,seg,dayIdx,slot){return bookings.find(b=>b.bed===bed&&b.segment===seg&&b.dayIdx===dayIdx&&b.time===slot);}
+function cLabel(m){return m==='fb'?'FB Messenger':m==='line'?'LINE':'人工傳訊';}
+
+function renderAll(){renderStats();renderThEditor();renderAdmSched();renderAdmTable();renderPayment();renderAdmDayTabs();}
+
+// ── Stats ─────────────────────────────────────────────────────
+function renderStats(){
+  // 以合併群組計算人數（同傳情人+被傳情人+床+日期+時段區間算一人）
+  const personKeys=new Set();
+  bookings.forEach(b=>{
+    if(b.notes&&b.notes.startsWith('【續時】'))return;
+    personKeys.add(`${b.booker}|${b.recipient}|${b.bed}|${b.segment}|${b.dayIdx}`);
+  });
+  const totalPersons=personKeys.size;
+  const totalParts=bookings.filter(b=>!(b.notes&&b.notes.startsWith('【續時】'))).reduce((s,b)=>s+b.parts.length,0);
+
+  // 已繳/未繳以人為單位
+  const paidKeys=new Set(),unpaidKeys=new Set();
+  bookings.forEach(b=>{
+    if(b.notes&&b.notes.startsWith('【續時】'))return;
+    const k=`${b.booker}|${b.recipient}|${b.bed}|${b.segment}|${b.dayIdx}`;
+    if(b.payment==='paid')paidKeys.add(k);
+    else unpaidKeys.add(k);
+  });
+  // 移除已繳中出現在未繳的（同一組有一筆unpaid就算未繳）
+  unpaidKeys.forEach(k=>paidKeys.delete(k));
+
+  document.getElementById('admin-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">總預約筆數</div><div class="stat-value">${bookings.length}</div><div class="stat-sub">部位共 ${totalParts} 個</div></div>
+    <div class="stat-card"><div class="stat-label">總預約人數</div><div class="stat-value">${totalPersons}</div><div class="stat-sub">不含續時</div></div>
+    <div class="stat-card"><div class="stat-label">已繳費</div><div class="stat-value" style="color:var(--green-soft);">${paidKeys.size}</div></div>
+    <div class="stat-card"><div class="stat-label">未繳費</div><div class="stat-value" style="color:var(--red-soft);">${unpaidKeys.size}</div></div>
+  `;
+}
+
+// ── 排班編輯器（每床每段）────────────────────────────────────
+function renderThEditor(){
+  const grid=rawGrid.length?rawGrid:BEDS.flatMap(b=>SEGS.map(s=>({bed:b,segment:s,names:['','','','','']})));
+  document.getElementById('th-editor').innerHTML=`
+    <div class="th-editor-table-wrap">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr>
+          <th style="padding:8px 8px;background:var(--cream);border-bottom:1px solid var(--border);font-size:11px;color:var(--stone);white-space:nowrap;min-width:50px;">床位</th>
+          <th style="padding:8px 8px;background:var(--cream);border-bottom:1px solid var(--border);font-size:11px;color:var(--stone);white-space:nowrap;min-width:50px;">時段</th>
+          ${DAYS.map(d=>'<th style="padding:8px 6px;background:var(--cream);border-bottom:1px solid var(--border);font-size:11px;color:var(--stone);text-align:center;white-space:nowrap;min-width:90px;">'+d+'</th>').join('')}
+        </tr></thead>
+        <tbody>${grid.map((row,ri)=>'<tr style="background:'+(Math.floor(ri/2)%2===0?'#FFF9F0':'#FFFFFF')+'">'+
+          '<td style="padding:6px 8px;font-weight:500;border-bottom:1px solid var(--border-light);white-space:nowrap;font-size:12px;">'+row.bed+' 床</td>'+
+          '<td style="padding:6px 8px;font-size:11px;color:var(--stone);border-bottom:1px solid var(--border-light);white-space:nowrap;">'+row.segment+'</td>'+
+          DAYS.map((_,di)=>'<td style="padding:3px 4px;border-bottom:1px solid var(--border-light);">'+
+            '<input type="text" value="'+(row.names[di]||'')+'" oninput="updateRawGrid('+ri+','+di+',this.value)"'+
+            ' placeholder="空=無人"'+
+            ' style="width:100%;border:1px solid var(--border);border-radius:6px;padding:6px 6px;font-size:12px;font-family:\'Noto Sans TC\',sans-serif;background:var(--cream);outline:none;"'+
+            ' onfocus="this.style.borderColor=\'var(--gold)\';this.style.background=\'var(--white)\'"'+
+            ' onblur="this.style.borderColor=\'\';this.style.background=\'\'">'+
+          '</td>').join('')+
+        '</tr>').join('')}</tbody>
+      </table>
+    </div>`;
+}
+
+function updateRawGrid(ri,di,val){
+  if(!rawGrid.length)rawGrid=BEDS.flatMap(b=>SEGS.map(s=>({bed:b,segment:s,names:['','','','','']})));
+  rawGrid[ri].names[di]=val;
+}
+
+async function saveTh(){
+  const grid=rawGrid.length?rawGrid:BEDS.flatMap(b=>SEGS.map(s=>({bed:b,segment:s,names:['','','','','']})));
+  const inputs=document.querySelectorAll('#th-editor input[type=text]');
+  inputs.forEach((inp,idx)=>{const ri=Math.floor(idx/5);const di=idx%5;if(grid[ri])grid[ri].names[di]=inp.value.trim();});
+  showLo('儲存排班...');
+  const res=await apiPost({action:'saveSchedule',schedule:grid});
+  if(res?.success){await loadData();showToast('排班已儲存');}
+  else showToast('儲存失敗：'+(res?.error||'未知錯誤'));
+  hideLo();
+}
+
+// ── 時段總覽 ──────────────────────────────────────────────────
+function renderAdmDayTabs(){const el=document.getElementById('admin-day-tabs');if(!el)return;el.innerHTML=DAYS.map((d,di)=>`<div class="day-tab ${di===admDay?'active':''}" onclick="selAdmDay(${di})">${d.replace(/\(.*\)/,'')}</div>`).join('');}
+function selAdmDay(idx){admDay=idx;renderAdmDayTabs();renderAdmSched();}
+function renderAdmSched(){
+  // 以床位為欄，行顯示時段
+  const dayMap=schedule[admDay]||{};
+  const activeBeds=Object.keys(dayMap).sort();
+  if(!activeBeds.length){
+    const g=document.getElementById('adm-sched');
+    g.style.gridTemplateColumns='1fr';
+    g.innerHTML='<div style="padding:14px;color:var(--stone-light);font-size:13px;">本日無排班</div>';
+    return;
+  }
+  const cols=activeBeds.length+1;
+  let html=`<div class="sg-header"></div>`+activeBeds.map(bed=>{
+    const thNames=SEGS.map(s=>dayMap[bed]?.[s]?.name||'').filter(Boolean);
+    return`<div class="sg-header">${bed}床<br><span style="font-size:9px;font-weight:400;color:var(--stone-light);">${thNames.join(' / ')}</span></div>`;
+  }).join('');
+
+  ALL_SLOTS.forEach((slot,si)=>{
+    const seg=si<5?'19-20':'20-21';
+    html+=`<div class="sg-time">${slot}</div>`;
+    activeBeds.forEach(bed=>{
+      const bk=bookings.find(b=>b.bed===bed&&b.segment===seg&&b.dayIdx===admDay&&b.time===slot);
+      if(bk){
+        html+=`<div class="sg-cell booked"><div class="sg-client">${bk.recipient}</div><div class="sg-parts">${bk.parts.join('、')}</div></div>`;
+      }else{
+        const thName=dayMap[bed]?.[seg]?.name||'';
+        html+=thName?`<div class="sg-cell free">空閒</div>`:`<div class="sg-cell" style="background:var(--cream-dark);border:1px solid var(--border-light);color:var(--stone-light);font-size:10px;">無排班</div>`;
+      }
+    });
+  });
+  const g=document.getElementById('adm-sched');
+  g.style.gridTemplateColumns=`110px repeat(${activeBeds.length},1fr)`;
+  g.innerHTML=html;
+}
+
+// ── 預約名單 ──────────────────────────────────────────────────
+function filterAdm(f,el){admFilter=f;document.querySelectorAll('#adm-filter-bar .filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderAdmTable();}
+function renderAdmTable(){
+  let data=[...bookings];
+  if(admFilter==='unpaid')data=data.filter(b=>b.payment==='unpaid');
+  else if(admFilter==='manual')data=data.filter(b=>b.contactMethod==='manual'&&!b.notified);
+  else if(admFilter==='online')data=data.filter(b=>b.type==='online');
+  else if(admFilter==='walkin')data=data.filter(b=>b.type==='walkin');
+  else if(admFilter==='ext')data=data.filter(b=>b.notes&&b.notes.startsWith('【續時】'));
+  // 搜尋過濾
+  const q=(document.getElementById('adm-search')?.value||'').trim().toLowerCase();
+  if(q)data=data.filter(b=>(b.booker||'').toLowerCase().includes(q)||(b.recipient||'').toLowerCase().includes(q));
+
+  // 合併同傳情人+被傳情人+床位+日期+時段區間的多筆（多部位合一行）
+  const groups=[];
+  const seen={};
+  data.forEach(b=>{
+    const isExt=b.notes&&b.notes.startsWith('【續時】');
+    // 續時、手動備注等不合併，直接顯示
+    if(isExt){groups.push({type:'single',b});return;}
+    const key=`${b.booker}|${b.recipient}|${b.bed}|${b.segment}|${b.dayIdx}|${b.type}`;
+    if(seen[key]!==undefined){
+      const g=groups[seen[key]];
+      g.parts=[...new Set([...g.parts,...(b.parts||[])])];
+      g.slots.push(b.time);
+      g.amount=(g.amount||0)+(b.amount||0);
+      g.ids.push(b.id);
+      if(b.payment==='unpaid')g.payment='unpaid';
+    }else{
+      seen[key]=groups.length;
+      groups.push({type:'group',booker:b.booker,recipient:b.recipient,
+        parts:[...(b.parts||[])],bed:b.bed,therapistName:b.therapistName,
+        therapistGender:b.therapistGender,segment:b.segment,dayIdx:b.dayIdx,
+        slots:[b.time],amount:b.amount||0,checkin:b.checkin,payment:b.payment,
+        contactMethod:b.contactMethod,notified:b.notified,type:b.type,notes:b.notes,
+        ids:[b.id],id:b.id});
+    }
+  });
+
+  document.getElementById('adm-tbody').innerHTML=groups.map(g=>{
+    if(g.type==='single'){
+      const b=g.b;
+      const gLabel=b.therapistGender?`(${b.therapistGender})`:'';
+      return`<tr style="background:#FAF5FF;">
+        <td style="font-size:12px;font-weight:500;">${b.id}</td>
+        <td>${b.booker}</td><td>${b.recipient}</td>
+        <td>${(b.parts||[]).map(p=>`<span class="badge-part">${p}</span>`).join('')}</td>
+        <td>${b.bed?`${b.bed}床 ${b.therapistName} ${gLabel}`.trim():'—'}<br><span style="font-size:10px;color:var(--stone);">${SEG_LABEL[b.segment]||b.segment||''}</span></td>
+        <td style="font-size:12px;">${DAYS[b.dayIdx]||''}</td>
+        <td style="font-size:11px;white-space:nowrap;">${b.time}</td>
+        <td>NT$${b.amount}</td>
+        <td>—</td>
+        <td><span class="badge ${b.payment==='paid'?'badge-paid':'badge-unpaid'}">${b.payment==='paid'?'已繳':'未繳'}</span></td>
+        <td><span class="badge" style="background:#F0E6FB;color:#6B2FA0;">續時</span><div style="font-size:10px;color:#6B2FA0;margin-top:2px;">${b.notes}</div></td>
+        <td><div style="display:flex;gap:4px;flex-wrap:wrap;">
+          ${b.payment!=='paid'?`<button class="btn-sm-success" onclick="markPaid('${b.id}')">收款</button>`:''}
+          <button class="btn-sm-neutral" onclick="delBk('${b.id}')">取消</button>
+        </div></td>
+      </tr>`;
+    }
+    // 合併群組
+    const gLabel=g.therapistGender?`(${g.therapistGender})`:'';
+    const disc=g.checkin?g.parts.length*DISC:0;
+    const slotsStr=g.slots.length>1?`${g.slots[0]} ~ ${g.slots[g.slots.length-1].split('-')[1]}`:(g.slots[0]||'');
+    const msgTime=g.slots.length>1?`${g.slots[0].split('-')[0]}-${g.slots[g.slots.length-1].split('-')[1]}`:(g.slots[0]||'');
+    const msgDataAttr=JSON.stringify({recipient:g.recipient,parts:g.parts,dayIdx:g.dayIdx,segment:g.segment,time:msgTime,therapistName:g.therapistName,bed:g.bed}).replace(/'/g,"&apos;");
+    return`<tr>
+      <td style="font-size:12px;font-weight:500;">${g.ids[0]}</td>
+      <td>${g.booker}${g.bookerDept?`<div style="font-size:10px;color:var(--stone-light);">${g.bookerDept}</div>`:''}</td><td>${g.recipient}</td>
+      <td>${g.parts.map(p=>`<span class="badge-part">${p}</span>`).join('')}</td>
+      <td>${g.bed?`${g.bed}床 ${g.therapistName} ${gLabel}`.trim():'—'}<br><span style="font-size:10px;color:var(--stone);">${SEG_LABEL[g.segment]||g.segment||''}</span></td>
+      <td style="font-size:12px;">${DAYS[g.dayIdx]||''}</td>
+      <td style="font-size:11px;white-space:nowrap;">${slotsStr}</td>
+      <td>NT$${g.amount}</td>
+      <td style="font-size:12px;color:${g.checkin?'var(--green-soft)':'var(--stone-light)'};">${g.checkin?`-$${disc}`:'—'}</td>
+      <td><span class="badge ${g.payment==='paid'?'badge-paid':'badge-unpaid'}">${g.payment==='paid'?'已繳':'未繳'}</span></td>
+      <td><span class="badge ${g.type==='online'?'badge-online':'badge-walkin'}">${g.type==='online'?'線上':'現場'}</span></td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap;">
+        ${g.payment!=='paid'?`<button class="btn-sm-success" data-ids='${JSON.stringify(g.ids).replace(/'/g,"&apos;")}' onclick="markGroupPaid(JSON.parse(this.dataset.ids))">收款</button>`:''}
+        ${!g.checkin?`<button class="btn-sm-neutral" data-ids='${JSON.stringify(g.ids).replace(/'/g,"&apos;")}' onclick="markGroupCk(JSON.parse(this.dataset.ids))">打卡</button>`:''}
+        ${g.contactMethod==='fb'||g.contactMethod==='line'?`<button class="btn-sm-neutral" data-msg='${msgDataAttr}' onclick="copyMsg(JSON.parse(this.dataset.msg))">複製</button>`:''}
+        ${g.contactMethod==='fb'||g.contactMethod==='line'?`<button class="btn-sm-neutral" onclick="openContact(bookings.find(b=>b.id==='${g.id}'))">${g.contactMethod==='fb'?'FB':'LINE'}</button>`:''}
+        <button class="btn-sm-neutral" data-ids='${JSON.stringify(g.ids).replace(/'/g,"&apos;")}' onclick="delGroupBk(JSON.parse(this.dataset.ids))">取消</button>
+      </div></td>
+    </tr>`;}).join('');
+}
+async function markGroupPaid(ids){
+  for(const id of ids){const b=bookings.find(b=>b.id===id);if(b)b.payment='paid';}
+  renderAll();
+  apiPost({action:'updateMultipleBookings',ids,field:'繳費狀態',value:'paid'});
+  showToast('收款完成（'+ids.length+' 筆）');
+}
+async function markGroupCk(ids){
+  for(const id of ids){const b=bookings.find(b=>b.id===id);if(b)b.checkin=true;}
+  renderAll();
+  apiPost({action:'updateMultipleBookings',ids,field:'打卡折扣',value:'Y'});
+  showToast('打卡折扣已套用（'+ids.length+' 筆）');
+}
+async function delGroupBk(ids){
+  bookings=bookings.filter(b=>!ids.includes(b.id));
+  renderAll();showToast('預約已取消');
+  for(const id of ids)apiPost({action:'deleteBooking',id});
+}
+async function markPaid(id){const b=bookings.find(b=>b.id===id);if(!b)return;b.payment='paid';renderAll();apiPost({action:'updateBooking',id,field:'繳費狀態',value:'paid'});showToast('收款完成');}
+async function markCk(id){const b=bookings.find(b=>b.id===id);if(!b)return;b.checkin=true;renderAll();apiPost({action:'updateBooking',id,field:'打卡折扣',value:'Y'});showToast('打卡折扣已套用');}
+async function markNtf(id){const b=bookings.find(b=>b.id===id);if(!b)return;b.notified=true;renderAll();apiPost({action:'updateBooking',id,field:'已通知',value:'Y'});showToast('已標記通知完成');}
+async function delBk(id){bookings=bookings.filter(b=>b.id!==id);renderAll();apiPost({action:'deleteBooking',id});showToast('預約已取消');}
+
+function buildMsgText(b){
+  const segLabel=b.segment==='19-20'?'前段 19:00—20:00':'後段 20:00—21:00';
+  return `【筋夾！？皮洽鬆？傳情通知】
+有人傳情給你！
+
+被傳情人：${b.recipient}
+部位：${(b.parts||[]).join('、')}
+日期：${DAYS[b.dayIdx]||''} ${segLabel}
+時間：${b.time||''}
+服務員：${b.therapistName||''}（${b.bed||''}床）
+地點：醫學院 104 多功能實習教室
+
+費用由傳情人支付，準時到場即可 ✨
+
+⚠️ 注意事項：
+1️⃣ 請提早三分鐘到場，手部消毒、量測體溫後遵循工作人員指示進場。
+2️⃣ 建議穿著寬鬆短袖、短褲；若有運動後請清潔身體再前來。
+3️⃣ 時段前如有發燒、咳嗽、失去嗅味覺等症狀請告知工作人員。
+4️⃣ 全程配戴口罩，如有不適請立即反應。
+5️⃣ 放鬆後可能有血液循環加快、體溫上升等反應，建議補充水分再離開。
+
+謝謝您的耐心閱讀，期待當天與您相遇🥰`;
+}
+
+const PAY_REMINDER = `同學您好，我是這屆成大物治傳情的負責人！
+不好意思這麼晚打擾，我們看到您有填寫今年傳情的網路表單。提醒您明天為最後一天網路報名繳費的時間，請於以下時間前往醫學院內攤位繳費，逾時將釋出名額給現場報名的人，謝謝您的配合。
+日期｜5/8（五）
+時間｜12:00～13:00
+　　　17:00～18:00`;
+
+function copyPayReminder(){
+  navigator.clipboard.writeText(PAY_REMINDER).then(()=>showToast('繳費提醒已複製！'));
+}
+
+function copyMsg(arg){
+  const b=(arg&&typeof arg==='object')?arg:bookings.find(x=>x.id===arg);
+  if(!b)return;
+  navigator.clipboard.writeText(buildMsgText(b)).then(()=>showToast('訊息已複製！'));
+}
+function openContact(b){
+  const isFb=b.contactMethod==='fb';
+  const url=isFb?(b.recipientFb||'https://www.facebook.com'):(b.contactAccount?'https://line.me/ti/p/~'+b.contactAccount:'https://line.me');
+  window.open(url,'_blank');
+}
+
+function renderPayment(){
+  // 以合併群組為單位計算金額（同傳情人+被傳情人+床+日期+時段）
+  const groupMap={};
+  bookings.forEach(b=>{
+    if(b.notes&&b.notes.startsWith('【續時】'))return; // 續時單獨計算
+    const key=`${b.booker}|${b.recipient}|${b.bed}|${b.segment}|${b.dayIdx}`;
+    if(!groupMap[key])groupMap[key]={parts:[],checkin:false,payment:b.payment,amount:0};
+    const g=groupMap[key];
+    g.parts=[...new Set([...g.parts,...(b.parts||[])])];
+    g.checkin=g.checkin||b.checkin;
+    if(b.payment==='unpaid')g.payment='unpaid';
+    g.amount+=(b.amount||0);
+  });
+  const groups=Object.values(groupMap);
+  // 加回續時（不合併）
+  bookings.filter(b=>b.notes&&b.notes.startsWith('【續時】')).forEach(b=>{
+    groups.push({parts:b.parts||[],checkin:b.checkin,payment:b.payment,amount:b.amount||0});
+  });
+  const paid=groups.filter(g=>g.payment==='paid').reduce((s,g)=>s+(g.checkin?g.amount-g.parts.length*DISC:g.amount),0);
+  const unpaid=groups.filter(g=>g.payment==='unpaid').reduce((s,g)=>s+(g.checkin?g.amount-g.parts.length*DISC:g.amount),0);
+  const disc=groups.filter(g=>g.checkin).reduce((s,g)=>s+g.parts.length*DISC,0);
+  document.getElementById('payment-summary').innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+    <div style="background:var(--green-pale);border-radius:10px;padding:14px;"><div style="font-size:11px;color:var(--green-soft);letter-spacing:0.08em;margin-bottom:6px;text-transform:uppercase;">已收款</div><div style="font-size:22px;font-weight:500;color:var(--green-soft);">NT$${paid.toLocaleString()}</div></div>
+    <div style="background:var(--red-pale);border-radius:10px;padding:14px;"><div style="font-size:11px;color:var(--red-soft);letter-spacing:0.08em;margin-bottom:6px;text-transform:uppercase;">待收款</div><div style="font-size:22px;font-weight:500;color:var(--red-soft);">NT$${unpaid.toLocaleString()}</div></div>
+    <div style="background:var(--gold-pale);border-radius:10px;padding:14px;"><div style="font-size:11px;color:var(--gold);letter-spacing:0.08em;margin-bottom:6px;text-transform:uppercase;">打卡折扣合計</div><div style="font-size:22px;font-weight:500;color:var(--ink);">NT$${disc.toLocaleString()}</div></div>
+  </div>`;
+}
+
+// ── 現場報名 ──────────────────────────────────────────────────
+let wiContactMethod='fb';
+let wiSlots=[];
+function renderWiDayTabs(){const el=document.getElementById('wi-day-tabs');if(!el)return;el.innerHTML=DAYS.map((d,di)=>`<div class="filter-btn ${di===wiDay?'active':''}" onclick="selWiDay(${di})">${d.replace(/\(.*\)/,'')}</div>`).join('');}
+function selWiDay(idx){wiDay=idx;wiThBed=null;wiSlots=[];renderWiDayTabs();document.getElementById('wi-sel-display').textContent='';updateWiThOpts();renderWiSlots();}
+function selWiSeg(seg,el){wiSeg=seg;wiThBed=null;wiSlots=[];document.querySelectorAll('#wi-seg-toggle .toggle-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('wi-sel-display').textContent='';updateWiThOpts();renderWiSlots();}
+function setWiContact(m,el){
+  wiContactMethod=m;
+  document.querySelectorAll('[data-m]').forEach(o=>{o.style.borderColor='var(--border)';o.style.background='var(--cream)';});
+  el.style.borderColor='var(--gold)';el.style.background='var(--gold-pale)';
+  document.getElementById('wi-account-fb').style.display=m==='fb'?'block':'none';
+  document.getElementById('wi-account-line').style.display=m==='line'?'block':'none';
+  document.getElementById('wi-account-gmail').style.display=m==='gmail'?'block':'none';
+}
+function updateWiThOpts(){
+  const ths=getTHforDaySeg(wiDay,wiSeg);
+  document.getElementById('wi-therapist').innerHTML='<option value="">— 請選擇服務人員 —</option>'+ths.map(t=>'<option value="'+t.bed+'">'+t.bed+'床 · '+t.name+(t.gender?' ('+t.gender+')':'')+'</option>').join('');
+}
+function getWiPartsCount(){return[...document.querySelectorAll('#wi-parts .part-btn.selected')].length;}
+function renderWiSlots(){
+  wiThBed=document.getElementById('wi-therapist').value||null;
+  // 注意：不在這裡清空 wiSlots，只有換服務人員/日期/時段時才清空
+  document.getElementById('wi-sel-display').textContent='';
+  const c=document.getElementById('wi-slots');
+  if(!wiThBed){c.innerHTML='<div style="color:var(--stone-light);font-size:13px;">請先選擇服務人員</div>';return;}
+  const slots=SLOTS_BY_SEG[wiSeg]||[];
+  const bkd=getBkSlots(wiThBed,wiSeg,wiDay);
+  const needed=getWiPartsCount()||1;
+  let html='<div style="font-size:12px;color:var(--stone);margin-bottom:8px;">需選 '+needed+' 個連續時段（'+needed+' 個部位）</div><div class="slots-grid">';
+  slots.forEach((s,si)=>{
+    const isB=bkd.includes(s);
+    const isSel=wiSlots.includes(s);
+    const last=wiSlots[wiSlots.length-1];
+    const lastIdx=last?slots.indexOf(last):-1;
+    const canAdd=!isB&&!isSel&&(wiSlots.length===0||si===lastIdx+1)&&wiSlots.length<needed;
+    if(isB) html+='<div class="slot-row"><div class="slot-time-label">'+s+'</div><div class="slot-btn booked">已預約</div></div>';
+    else if(isSel) html+='<div class="slot-row"><div class="slot-time-label">'+s+'</div><div class="slot-btn selected" onclick="deselectWiSlot(\''+s+'\')">已選 ✕</div></div>';
+    else if(canAdd) html+='<div class="slot-row"><div class="slot-time-label">'+s+'</div><div class="slot-btn available" onclick="selectWiSlot(\''+s+'\')">可預約</div></div>';
+    else html+='<div class="slot-row"><div class="slot-time-label">'+s+'</div><div class="slot-btn" style="border:1.5px solid var(--border);background:var(--cream-dark);color:var(--stone-light);cursor:not-allowed;">'+(wiSlots.length>=needed?'已選滿':'請先選前一格')+'</div></div>';
+  });
+  html+='</div>';
+  c.innerHTML=html;
+  updateWiSelDisplay();
+  updateWiPrice();
+}
+function selectWiSlot(s){
+  const needed=getWiPartsCount()||1;
+  if(wiSlots.length>=needed){showToast('已選滿 '+needed+' 個時段');return;}
+  wiSlots.push(s);renderWiSlots();
+}
+function deselectWiSlot(s){
+  if(wiSlots[wiSlots.length-1]===s){wiSlots.pop();renderWiSlots();}
+  else showToast('只能移除最後選的時段');
+}
+function updateWiSelDisplay(){
+  const todayTh=(schedule[wiDay]||{})[wiThBed]?.[wiSeg];
+  const needed=getWiPartsCount()||1;
+  const el=document.getElementById('wi-sel-display');
+  if(!el)return;
+  if(wiSlots.length===needed&&wiThBed) el.textContent='✓ '+wiThBed+'床 '+(todayTh?.name||'')+' · '+wiSlots[0]+'起 共'+wiSlots.length+'段';
+  else if(wiThBed) el.textContent=wiThBed+'床 · 還需選 '+(needed-wiSlots.length)+' 個時段';
+}
+function setWiCk(v,el){wiCk=v;document.querySelectorAll('#tab-walkin .toggle-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');updateWiPrice();}
+function updateWiPrice(){
+  const parts=[...document.querySelectorAll('#wi-parts .part-btn.selected')].map(e=>e.textContent);
+  const a=document.getElementById('wi-price');
+  if(!parts.length){a.textContent='';return;}
+  const base=parts.length*PRICE;
+  const disc=wiCk?parts.length*DISC:0;
+  let html='部位：'+parts.join('、')+' · NT$'+base;
+  if(wiCk) html+=' <span style="color:var(--red-soft);">-NT$'+disc+'</span> = <strong>NT$'+(base-disc)+'</strong>';
+  a.innerHTML=html;
+}
+async function submitWalkin(){
+  const bn=document.getElementById('wi-booker').value.trim(),bp=document.getElementById('wi-phone').value.trim(),rn=document.getElementById('wi-recipient').value.trim();
+  const bdept=document.getElementById('wi-dept').value.trim();
+  const parts=[...document.querySelectorAll('#wi-parts .part-btn.selected')].map(e=>e.textContent);
+  const cm=wiContactMethod||'fb';
+  const ca=cm==='line'?(document.getElementById('wi-contact-account-line').value.trim()):cm==='gmail'?(document.getElementById('wi-contact-account-gmail').value.trim()):(document.getElementById('wi-contact-account-fb').value.trim());
+  if(!bn||!bp||!rn){showToast('請填寫傳情人與被傳情人姓名');return;}
+  if(!parts.length){showToast('請選擇至少一個部位');return;}
+  if(!wiThBed){showToast('請選擇服務人員');return;}
+  if(wiSlots.length<parts.length){showToast('還需選 '+(parts.length-wiSlots.length)+' 個時段');return;}
+  const todayTh=(schedule[wiDay]||{})[wiThBed]?.[wiSeg];
+  showLo('登記中...');
+  for(let si=0;si<wiSlots.length;si++){
+    const s=wiSlots[si];
+    const bk={booker:bn,bookerDept:bdept,bookerPhone:bp,bookerFb:'',recipient:rn,recipientFb:'',
+      parts:[parts[si]||parts[0]],therapistName:todayTh?.name||'',therapistGender:todayTh?.gender||'',
+      bed:wiThBed,segment:wiSeg,dayIdx:wiDay,time:s,
+      amount:PRICE,checkin:wiCk,payment:'unpaid',type:'walkin',
+      contactMethod:cm,contactAccount:ca,notified:false,
+      notes:si===0?'【現場報名】':'【現場報名】第'+(si+1)+'部位'};
+    const res=await apiPost({action:'addBooking',booking:bk});
+    bookings.push({...bk,id:res?.id||('L'+Date.now()+si)});
+  }
+  hideLo();
+  ['wi-booker','wi-phone','wi-recipient','wi-dept'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('#wi-parts .part-btn.selected').forEach(e=>e.classList.remove('selected'));
+  wiSlots=[];wiThBed=null;document.getElementById('wi-therapist').value='';
+  document.getElementById('wi-slots').innerHTML='<div style="color:var(--stone-light);font-size:13px;">請先選擇服務人員</div>';
+  document.getElementById('wi-sel-display').textContent='';document.getElementById('wi-price').textContent='';
+  document.getElementById('wi-contact-account-fb').value='';
+  document.getElementById('wi-contact-account-line').value='';
+  document.getElementById('wi-contact-account-gmail').value='';
+  document.getElementById('wi-account-fb').style.display='block';
+  document.getElementById('wi-account-line').style.display='none';
+  document.getElementById('wi-account-gmail').style.display='none';
+  wiContactMethod='fb';
+  document.querySelectorAll('[data-m]').forEach(o=>{o.style.borderColor='var(--border)';o.style.background='var(--cream)';});
+  const fbOpt=document.querySelector('[data-m="fb"]');
+  if(fbOpt){fbOpt.style.borderColor='var(--gold)';fbOpt.style.background='var(--gold-pale)';}
+  renderAll();
+  showToast('現場預約成功！'+rn+' · '+parts.join('、')+' · NT$'+parts.length*PRICE,4000);
+}
+
+// ── Init ──────────────────────────────────────────────────────
+// 嘗試從上次儲存的網址自動連線
+const _saved = localStorage.getItem('adminScriptUrl');
+if(_saved){SCRIPT_URL=_saved;document.getElementById('url-input').value=_saved;}
+
+// 不管有沒有連線，先渲染空白狀態讓按鈕可以使用
+rawGrid=BEDS.flatMap(b=>SEGS.map(s=>({bed:b,segment:s,names:['','','','','']})));
+renderAll();
+renderWiDayTabs();
+
+// 已登入且有網址才自動連線（未登入時不向伺服器要資料，也避免登入頁狂跳錯誤）
+if(SCRIPT_URL && isAuthed())loadData();
+
+// ── 音效（"叮"）───────────────────────────────────────────────
+function playDing(){
+  try{
+    const c=new(window.AudioContext||window.webkitAudioContext)();
+    const notes=[659,784,1047];
+    notes.forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);
+      o.type='sine';
+      const t=c.currentTime+i*0.15;
+      o.frequency.setValueAtTime(f,t);
+      g.gain.setValueAtTime(0.38,t);
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.5);
+      o.start(t);o.stop(t+0.5);
+    });
+  }catch(e){}
+}
+
+// 每 30 秒靜默更新
+let prevBookingCount=0;
+async function silentRefresh(){
+  const url=SCRIPT_URL||localStorage.getItem('adminScriptUrl')||'';
+  if(!url)return;
+  if(!SCRIPT_URL)SCRIPT_URL=url;
+  try{
+    const bRes=await fetch(`${url}?action=getBookings&_t=${Date.now()}`).then(r=>r.json());
+    if(bRes?.bookings){
+      const newBk=parseBk(bRes.bookings);
+      // 有新預約時播放音效並提示
+      if(prevBookingCount>0&&newBk.length>prevBookingCount){
+        playDing();
+        const diff=newBk.length-prevBookingCount;
+        showToast(`🔔 新增 ${diff} 筆預約！`,3000);
+      }
+      prevBookingCount=newBk.length;
+      bookings=newBk;
+      renderStats();renderAdmSched();renderAdmTable();renderPayment();
+    }
+  }catch(e){console.warn('自動更新失敗',e);}
+}
+
+// ================================================================
+// 收支結算
+// ================================================================
+let cfDay=0, cfSeg='1200-1300', cfPrevBag=0;
+const CF_DAYS=['5/4(六)','5/5(日)','5/6(一)','5/7(二)','5/8(三)','5/11(一)','5/12(二)','5/13(三)','5/14(四)','5/15(五)'];
+
+function setCfDay(idx,el){
+  cfDay=idx;
+  document.querySelectorAll('#cf-day-tabs .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  calcCf();
+}
+function setCfSeg(seg,el){
+  cfSeg=seg;
+  document.querySelectorAll('#cf-seg-tabs .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  calcCf();
+}
+
+function calcCf(){
+  const bag=parseInt(document.getElementById('cf-bag').value)||0;
+  const ck=parseInt(document.getElementById('cf-ck').value)||0;
+  const nock=parseInt(document.getElementById('cf-nock').value)||0;
+  const refund=parseInt(document.getElementById('cf-refund').value)||0;
+  if(!bag&&!ck&&!nock){document.getElementById('cf-calc').style.display='none';return;}
+  const expected=ck*60+nock*65-refund;
+  const net=bag-cfPrevBag;
+  const diff=net-expected;
+  document.getElementById('cf-expected').textContent='NT$'+expected;
+  document.getElementById('cf-net').textContent='NT$'+net;
+  const diffEl=document.getElementById('cf-diff');
+  diffEl.textContent=(diff>=0?'+':'')+diff+' 元';
+  diffEl.style.color=diff===0?'var(--green-soft)':diff>0?'var(--stone)':'var(--red-soft)';
+  document.getElementById('cf-calc').style.display='block';
+}
+
+function saveCfInit(){
+  const v=parseInt(document.getElementById('cf-init').value)||0;
+  cfPrevBag=v;
+  localStorage.setItem('cf_init_'+SCRIPT_URL,v);
+  showToast('備用金已儲存（NT$'+v+'）');
+}
+
+async function submitCashflow(){
+  const bag=parseInt(document.getElementById('cf-bag').value)||0;
+  const ck=parseInt(document.getElementById('cf-ck').value)||0;
+  const nock=parseInt(document.getElementById('cf-nock').value)||0;
+  const refund=parseInt(document.getElementById('cf-refund').value)||0;
+  const note=document.getElementById('cf-note').value.trim();
+  if(!bag){showToast('請填寫錢袋總和');return;}
+  const net=bag-cfPrevBag;
+  const expected=ck*60+nock*65-refund;
+  const res=await apiPost({action:'addCashflow',record:{
+    date:CF_DAYS[cfDay],segment:cfSeg,
+    bagTotal:bag,net,ckCount:ck,nockCount:nock,
+    expected,diff:net-expected,refund,note,
+    createdAt:new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})
+  }});
+  if(res?.success){
+    cfPrevBag=bag;
+    showToast('已寫入收支記錄');
+    document.getElementById('cf-bag').value='';
+    document.getElementById('cf-ck').value='';
+    document.getElementById('cf-nock').value='';
+    document.getElementById('cf-refund').value='';
+    document.getElementById('cf-note').value='';
+    document.getElementById('cf-calc').style.display='none';
+    loadCashflow();
+  } else {
+    showToast('寫入失敗，請重試');
+  }
+}
+
+async function loadCashflow(){
+  const res=await apiPost({action:'getCashflow'});
+  const c=document.getElementById('cf-history');
+  if(!res?.records?.length){c.innerHTML='<div style="color:var(--stone-light);font-size:13px;">尚無收支記錄</div>';return;}
+  const rows=res.records.map(r=>`
+    <tr>
+      <td>${r.date||''}</td>
+      <td>${r.segment||''}</td>
+      <td style="font-weight:500;">NT$${r.bagTotal||0}</td>
+      <td>NT$${r.net||0}</td>
+      <td style="font-size:11px;">${r.ckCount||0}×60 + ${r.nockCount||0}×65${r.refund?` − ${r.refund}退費`:''}</td>
+      <td>NT$${r.expected||0}</td>
+      <td style="color:${(r.diff||0)===0?'var(--green-soft)':(r.diff||0)>0?'var(--stone)':'var(--red-soft)'};font-weight:500;">${(r.diff||0)>=0?'+':''}${r.diff||0}</td>
+      <td style="color:var(--stone-light);font-size:11px;">${r.note||''}</td>
+    </tr>`).join('');
+
+  // 彙整
+  const totalNet=res.records.reduce((s,r)=>s+(r.net||0),0);
+  const totalRefund=res.records.reduce((s,r)=>s+(r.refund||0),0);
+  const initAmt=parseInt(localStorage.getItem('cf_init_'+SCRIPT_URL))||0;
+
+  c.innerHTML=`
+    <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead><tr><th>日期</th><th>時段</th><th>錢袋總和</th><th>本段淨收益</th><th>張數明細</th><th>預期收入</th><th>差異</th><th>備注</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+    <div style="margin-top:14px;padding:12px 16px;background:var(--cream-dark);border-radius:8px;font-size:13px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <div><div style="font-size:11px;color:var(--stone);margin-bottom:2px;">總淨收益</div><div style="font-weight:500;">NT$${totalNet}</div></div>
+      <div><div style="font-size:11px;color:var(--stone);margin-bottom:2px;">退費合計</div><div style="font-weight:500;">NT$${totalRefund}</div></div>
+      <div><div style="font-size:11px;color:var(--stone);margin-bottom:2px;">總收入（扣初始）</div><div style="font-weight:500;color:var(--green-soft);">NT$${totalNet-initAmt}</div></div>
+    </div>`;
+}
+
+let countdown=30;
+setInterval(()=>{
+  countdown--;
+  const el=document.getElementById('refresh-countdown');
+  if(el)el.textContent=countdown+'s';
+  if(countdown<=0){countdown=30;if(isAuthed())silentRefresh();}
+},1000);
+</script>
+</body>
+</html>

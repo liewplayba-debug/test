@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">筋夾！？皮洽鬆？ · 傳情預約</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#B8955A;--gold-light:#D4B483;--gold-pale:#F5EDD8;--ink:#1A1814;--ink-soft:#3D3830;--stone:#7A7168;--stone-light:#ADA49B;--cream:#FAF7F2;--cream-dark:#F0EBE0;--white:#FFFFFF;--red-soft:#C0392B;--red-pale:#FCEAEA;--green-soft:#27AE60;--green-pale:#E8F5EE;--border:rgba(184,149,90,0.25);--border-light:rgba(184,149,90,0.12);--shadow:0 2px 20px rgba(26,24,20,0.06);--shadow-md:0 4px 32px rgba(26,24,20,0.10);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh;}
+.top-nav{background:var(--ink);display:flex;align-items:center;padding:0 24px;border-bottom:1px solid rgba(184,149,90,0.3);min-height:54px;}
+.brand-en{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--gold-light);letter-spacing:0.06em;}
+.brand-zh{font-size:10px;color:var(--stone-light);letter-spacing:0.14em;margin-left:12px;}
+.page{padding:28px 32px;max-width:900px;margin:0 auto;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:var(--shadow);}
+.card-title{font-size:12px;font-weight:500;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border-light);}
+.info-banner{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:22px;box-shadow:var(--shadow);}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;}
+.info-item{display:flex;gap:8px;padding:2px 0;font-size:12px;}
+.info-label{color:var(--stone);white-space:nowrap;min-width:72px;}
+.info-value{color:var(--ink-soft);}
+.info-divider{border:none;border-top:1px solid var(--border-light);margin:10px 0;}
+.tag{display:inline-block;background:var(--ink);color:var(--gold-light);font-size:11px;padding:2px 8px;border-radius:10px;margin-right:3px;}
+.notice-list{font-size:12px;color:var(--stone);line-height:2.1;}
+.notice-list span{display:block;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+label{font-size:12px;color:var(--stone);letter-spacing:0.06em;font-weight:500;}
+.required::after{content:' *';color:var(--gold);}
+input[type=text],input[type=tel],input[type=url],input[type=email],select,textarea{border:1px solid var(--border);border-radius:8px;padding:9px 13px;font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--ink);background:var(--cream);transition:border-color 0.2s;outline:none;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);background:var(--white);}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23B8955A' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;}
+/* 部位 */
+.parts-group{display:flex;gap:8px;flex-wrap:wrap;}
+.part-btn{padding:7px 15px;border:1.5px solid var(--border);border-radius:20px;font-size:13px;color:var(--stone);cursor:pointer;transition:all 0.2s;background:var(--cream);user-select:none;}
+.part-btn.selected{border-color:var(--gold);background:var(--gold-pale);color:var(--ink-soft);font-weight:500;}
+/* 日期 */
+.day-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.day-tabs::-webkit-scrollbar{display:none;}
+.day-tab{padding:9px 14px;font-size:13px;cursor:pointer;color:var(--stone);border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+.day-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:500;}
+/* 前後段 */
+.segment-group{display:flex;gap:10px;margin-bottom:14px;}
+.segment-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--cream);}
+.segment-btn.active{border-color:var(--gold);background:var(--gold-pale);box-shadow:0 0 0 1px var(--gold);}
+.segment-btn-time{font-size:14px;font-weight:500;color:var(--ink);}
+.segment-btn-label{font-size:11px;color:var(--stone);margin-top:2px;}
+/* 服務員 */
+.therapist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:8px;}
+.th-card{border:1px solid var(--border);border-radius:10px;padding:11px;cursor:pointer;transition:all 0.2s;background:var(--cream);text-align:center;}
+.th-card.selected{border-color:var(--gold);background:var(--gold-pale);box-shadow:0 0 0 1px var(--gold);}
+.th-card.disabled{opacity:0.4;cursor:not-allowed;}
+.th-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-family:'Cormorant Garamond',serif;font-size:15px;}
+.th-avatar.male{background:#E8F0FB;color:#2C4A8A;}
+.th-avatar.female{background:#FBE8F0;color:#8A2C5A;}
+.th-avatar.other{background:var(--cream-dark);color:var(--stone);}
+.th-name{font-size:12px;font-weight:500;color:var(--ink);}
+.th-bed{font-size:10px;color:var(--stone);}
+.th-gender{font-size:10px;margin-top:3px;padding:1px 7px;border-radius:8px;display:inline-block;}
+.th-gender.male{background:#E8F0FB;color:#2C4A8A;}
+.th-gender.female{background:#FBE8F0;color:#8A2C5A;}
+/* 時段 */
+.slots-grid{display:grid;gap:5px;}
+.slot-row{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;}
+.slot-label{font-size:12px;color:var(--stone);text-align:right;padding-right:4px;font-weight:500;}
+.slot-btn{padding:9px 12px;border-radius:8px;text-align:center;font-size:13px;cursor:pointer;border:1.5px solid;transition:all 0.15s;user-select:none;}
+.slot-btn.available{border-color:rgba(39,174,96,0.35);background:var(--green-pale);color:#1A6B3A;}
+.slot-btn.selected{border-color:var(--gold);background:var(--gold-pale);color:var(--ink);font-weight:500;}
+.slot-btn.booked{border-color:rgba(192,57,43,0.22);background:var(--red-pale);color:#922B21;cursor:not-allowed;}
+.slot-btn.locked{border-color:var(--border);background:var(--cream-dark);color:var(--stone-light);cursor:not-allowed;}
+.slot-btn.conflict{border-color:rgba(192,57,43,0.3);background:#FEF5F5;color:#922B21;cursor:not-allowed;font-size:11px;}
+/* 被傳情人 */
+.recipient-card{border:1px solid var(--border);border-radius:12px;padding:18px;background:var(--cream);margin-bottom:12px;}
+.rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.rc-num{font-size:12px;font-weight:500;color:var(--gold);background:var(--gold-pale);border-radius:6px;padding:3px 10px;}
+.rc-remove{font-size:12px;color:var(--stone-light);cursor:pointer;border:none;background:none;font-family:'Noto Sans TC',sans-serif;}
+.rc-section{margin-top:14px;border-top:1px solid var(--border-light);padding-top:14px;}
+.rc-section-label{font-size:11px;font-weight:500;color:var(--gold);letter-spacing:0.10em;text-transform:uppercase;margin-bottom:10px;}
+.add-recipient-btn{border:1.5px dashed var(--border);border-radius:10px;padding:11px;text-align:center;color:var(--gold);font-size:13px;cursor:pointer;transition:all 0.2s;background:transparent;width:100%;font-family:'Noto Sans TC',sans-serif;}
+.contact-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px;}
+.contact-opt{border:1.5px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;text-align:center;font-size:12px;color:var(--stone);transition:all 0.2s;background:var(--cream);}
+.contact-opt.selected{border-color:var(--gold);background:var(--gold-pale);color:var(--ink-soft);font-weight:500;}
+.contact-opt-sub{font-size:10px;color:var(--stone-light);margin-top:2px;}
+/* 已選摘要 */
+.sel-summary{background:var(--gold-pale);border:1px solid var(--border);border-radius:8px;padding:10px 13px;margin-top:10px;font-size:12px;color:var(--ink-soft);}
+.sel-summary-ok{border-color:rgba(39,174,96,0.4);background:var(--green-pale);color:#1A6B3A;}
+.sel-summary-warn{border-color:rgba(184,149,90,0.4);background:var(--gold-pale);color:var(--ink-soft);}
+/* 價格 */
+.price-calc{background:var(--gold-pale);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.price-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--ink-soft);}
+.price-row.total{border-top:1px solid var(--border);margin-top:8px;padding-top:10px;font-weight:500;font-size:15px;color:var(--ink);}
+.section-divider{height:1px;background:var(--border-light);margin:16px 0;}
+.btn-primary{background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);padding:12px 28px;border-radius:8px;font-size:14px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;letter-spacing:0.06em;transition:all 0.2s;font-weight:500;}
+.live-indicator{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green-soft);font-weight:500;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green-soft);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.loading-overlay{position:fixed;inset:0;background:rgba(26,24,20,0.45);display:none;align-items:center;justify-content:center;z-index:9000;}
+.loading-box{background:var(--white);border-radius:12px;padding:28px 36px;text-align:center;box-shadow:var(--shadow-md);}
+.loading-spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);border-radius:10px;padding:13px 24px;font-size:13px;z-index:9999;transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);text-align:center;max-width:90vw;box-shadow:var(--shadow-md);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+@media(max-width:680px){.info-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.contact-opts{grid-template-columns:1fr}.segment-group{flex-direction:column}.page{padding:16px 14px}.card{padding:16px 14px}.therapist-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}.slot-row{grid-template-columns:95px 1fr}.btn-primary{width:100%;text-align:center}}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <span class="brand-en">筋夾！？皮洽鬆？</span>
+  <span class="brand-zh">軟組織放鬆 · 傳情預約</span>
+</nav>
+<div class="loading-overlay" id="lo" style="display:none;"><div class="loading-box"><div class="loading-spinner"></div><div style="font-size:13px;color:var(--stone);" id="lo-text">載入中...</div></div></div>
+<div class="toast" id="toast"></div>
+
+<!-- 主表單頁 -->
+<div class="page" id="main-page">
+  <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--ink);margin-bottom:3px;letter-spacing:0.04em;">傳情預約 · 線上報名</div>
+  <div style="font-size:13px;color:var(--stone);margin-bottom:20px;">每人最多傳情給 3 位被傳情人，請依步驟填寫</div>
+
+  <div class="info-banner" id="info-banner"></div>
+
+  <!-- 步驟一 -->
+  <div class="card">
+    <div class="card-title">步驟一 · 傳情人資料</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="required">傳情人姓名</label><input type="text" id="booker-name" placeholder="您的姓名"></div>
+      <div class="form-group"><label class="required">系級</label><input type="text" id="booker-dept" placeholder="例：物治115"></div>
+      <div class="form-group"><label class="required">聯絡電話</label><input type="tel" id="booker-phone" placeholder="09XX-XXX-XXX"></div>
+      <div class="form-group"><label class="required">傳情人臉書連結</label><input type="url" id="booker-fb" placeholder="https://www.facebook.com/yourname"></div>
+      <div class="form-group"><label class="required">Email（預約確認信）</label><input type="email" id="booker-email" placeholder="yourname@gmail.com"></div>
+    </div>
+  </div>
+
+  <!-- 步驟二：被傳情人（每人各自選服務人員+時段） -->
+  <div class="card">
+    <div class="card-title">步驟二 · 被傳情人資料與時段選擇</div>
+    <div style="font-size:12px;color:var(--stone);margin-bottom:16px;">每位被傳情人可分別選擇服務人員和時段，選幾個部位就占幾個時段</div>
+    <div id="recipients-list"></div>
+    <button class="add-recipient-btn" id="add-btn" onclick="addRecipient()">＋ 新增被傳情人</button>
+  </div>
+
+  <!-- 步驟三 -->
+  <div class="card">
+    <div class="card-title">步驟三 · 費用試算與備注</div>
+    <div id="price-area"><div style="color:var(--stone-light);font-size:13px;">請先為被傳情人選擇部位</div></div>
+    <div class="section-divider"></div>
+    <div class="form-group"><label>備注（特殊需求、過敏資訊等）</label><textarea id="notes" rows="2" placeholder="任何需要告知的事項…"></textarea></div>
+    <div style="margin-top:16px;display:flex;justify-content:flex-end;"><button class="btn-primary" onclick="submitBooking()">確認送出預約</button></div>
+  </div>
+</div>
+
+<!-- 確認頁 -->
+<div id="confirm-page" style="display:none;padding:28px 32px;max-width:700px;margin:0 auto;">
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="width:60px;height:60px;border-radius:50%;background:var(--green-pale);border:2px solid var(--green-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);">預約送出成功</div>
+    <div style="font-size:13px;color:var(--stone);margin-top:6px;">確認信已寄送至您的 Email，請留意收件匣</div>
+  </div>
+  <div class="card"><div class="card-title">預約資訊</div><div id="confirm-content"></div></div>
+  <div class="card" style="background:var(--gold-pale);">
+    <div style="font-size:13px;color:var(--ink-soft);line-height:1.9;">
+      <div style="font-weight:500;color:var(--ink);margin-bottom:10px;">重要提醒</div>
+      <div>繳費期限：5/4(一) — 5/6(三)，12:00—13:00、17:00—18:00</div>
+      <div>繳費地點：醫學院 104 多功能實習教室前</div>
+      <div style="margin-top:4px;color:var(--red-soft);font-size:12px;">逾期未繳將自動取消資格</div>
+    </div>
+  </div>
+  <div class="card" style="background:var(--cream-dark);border-color:var(--border);">
+    <div style="font-size:13px;color:var(--ink-soft);line-height:2;">
+      <div style="font-weight:500;color:var(--ink);margin-bottom:10px;">⚠️ 注意事項</div>
+      <div>1️⃣ 請於時段提早約三分鐘到達現場報到，並在進行手部消毒、量測體溫後遵循工作人員指示進場。</div>
+      <div>2️⃣ 建議穿著寬鬆之短袖、短褲前來放鬆；若在這之前有從事打球、健身等體育活動，也希望您將身體清潔後再到現場，謝謝您的配合。</div>
+      <div>3️⃣ 如果在傳情時段前有發燒、持續咳嗽、失去嗅味覺…等症狀，請立刻告訴我們，我們將視情況予傳情者退費。</div>
+      <div>4️⃣ 過程中需全程配戴口罩，若有身體上的不適，請立刻與在場的同學反應。</div>
+      <div>5️⃣ 軟組織放鬆後會有加快血液循環、體溫上升…等生理反應，可以自備水壺在教室外補充水分，適當休息後再離開現場。</div>
+      <div style="margin-top:10px;">謝謝您的耐心閱讀，期待當天與您相遇🥰</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:8px;">
+    <button onclick="location.reload()" style="background:transparent;border:1px solid var(--border);color:var(--stone);padding:10px 24px;border-radius:8px;font-size:13px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;">再填一份</button>
+  </div>
+</div>
+
+<script>
+const DAYS=['5/11(一)','5/12(二)','5/13(三)','5/14(四)','5/15(五)'];
+const PARTS=['上肢','下肢','背部','肩頸'];
+const PRICE=65,DISC=5;
+const SEGS=['19-20','20-21'];
+function buildSlots(){const s=[];let h=19,m=0;for(let i=0;i<10;i++){const st=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;let eh=h,em=m+12;if(em>=60){eh++;em-=60;}s.push(`${st}-${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`);m+=12;if(m>=60){h++;m-=60;}}return s;}
+const ALL_SLOTS=buildSlots();
+const SLOTS_BY_SEG={'19-20':ALL_SLOTS.slice(0,5),'20-21':ALL_SLOTS.slice(5,10)};
+
+// ↓↓↓ 把你的 Apps Script 網址貼在這裡（只需填一次）↓↓↓
+// ================================================================
+// 設定區 — 所有需要修改的內容都在這裡
+// ================================================================
+
+// 【必填】Apps Script 網址
+let SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrxTlaoBOVqh-EIJovrnqZL0UQ7wd-9ksaqewEGyVI7lWiwRuwCJEHkFFQZGSKPzFU6g/exec';
+
+// 【必填】安全密鑰，必須與 Apps Script 裡的 SECRET_KEY 一致
+const SECRET_KEY = 'DCPT116';
+
+// 【活動資訊】顯示在表單頂部的活動說明
+const CFG = {
+  activityName:  '筋夾！？皮洽？',          // 活動名稱
+  subtitle:      '軟組織放鬆 · 傳情預約',      // 副標題
+  price:         65,                            // 每部位價格
+  discount:      5,                             // 打卡折扣
+  slotMin:       10,                            // 每時段分鐘數
+  dates:         '5/11(一) — 5/15(五)',         // 活動日期
+  time:          '19:00—21:00',                 // 活動時間
+  location:      '醫學院 104 多功能實習教室',   // 活動地點
+  payDeadline:   '5/4(一) — 5/6(三)，12—13時 / 17—18時，逾期取消資格',  // 繳費期限
+  payLocation:   '醫學院 104 多功能實習教室前',  // 繳費地點
+  notice1:       '表單需填寫傳情人與被傳情人臉書連結，可先複製好。此份表單最多可傳給三位被傳情人。',
+  notice2:       '選幾個部位就占幾個時段，每個時段 10 分鐘。每位被傳情人可各自選擇不同服務人員和時段。',
+  notice3:       '背部不含頸部後面。傳情相關事項聯絡會透過臉書。',
+};
+
+// ================================================================
+
+// schedule[dayIdx] = {bed: {seg: {name,gender}}}
+let schedule=[];
+let bookings=[];
+
+// 每位被傳情人的資料結構
+// {name, fb, parts:[], contactMethod:'fb', contactAccount:'',
+//  selDay:0, selSeg:'19-20', selTh:null, selSlots:[]}
+let recipients=[];
+
+function apiFetch(a){return fetch(`${SCRIPT_URL}?action=${a}&_t=${Date.now()}`).then(r=>r.json());}
+function apiPost(d){return fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({...d,secret:SECRET_KEY})}).then(r=>r.json()).catch(()=>null);}
+function showLo(t='載入中...'){document.getElementById('lo-text').textContent=t;document.getElementById('lo').style.display='flex';}
+function hideLo(){document.getElementById('lo').style.display='none';}
+function showToast(msg,dur=4000){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+
+async function loadData(){
+  if(!SCRIPT_URL||SCRIPT_URL==='在此貼上你的網址')return;
+  showLo('載入資料中...');
+  try{
+    const[bRes,tRes]=await Promise.all([apiFetch('getBookings'),apiFetch('getTherapists')]);
+    if(bRes?.bookings)bookings=parseBk(bRes.bookings);
+    if(tRes?.schedule)schedule=tRes.schedule;
+    renderAll();
+  }catch(e){showToast('連線失敗，請確認網址');}
+  hideLo();
+}
+
+function parseBk(arr){
+  return arr.map(b=>({
+    id:b['編號'],recipient:b['被傳情人'],parts:typeof b['部位']==='string'?b['部位'].split(',').filter(Boolean):(b['部位']||[]),
+    therapistName:b['服務人員名稱']||'',therapistGender:b['性別']||'',
+    bed:b['床位']||'',segment:b['時段區間']||'',
+    dayIdx:parseInt(b['日期索引'])||0,time:b['時段'],
+    payment:b['繳費狀態']||'unpaid'
+  }));
+}
+
+// ── 被傳情人管理 ──────────────────────────────────────────────
+function addRecipient(){
+  if(recipients.length>=3)return;
+  recipients.push({name:'',fb:'',parts:[],contactMethod:'fb',contactAccount:'',
+    selDay:0,selSeg:'19-20',selTh:null,selSlots:[]});
+  renderAll();
+}
+function removeRecipient(i){recipients.splice(i,1);renderAll();}
+
+function togglePart(i,p){
+  const r=recipients[i];
+  const idx=r.parts.indexOf(p);
+  if(idx>-1)r.parts.splice(idx,1);
+  else r.parts.push(p);
+  // 部位數改變時，重置時段選擇（但保留服務人員）
+  r.selSlots=[];
+  renderAll();
+}
+
+function setDay(i,d){recipients[i].selDay=d;recipients[i].selTh=null;recipients[i].selSlots=[];renderAll();}
+function setSeg(i,s){recipients[i].selSeg=s;recipients[i].selTh=null;recipients[i].selSlots=[];renderAll();}
+function setTh(i,th){recipients[i].selTh=th;recipients[i].selSlots=[];renderAll();}
+function setContact(i,m){recipients[i].contactMethod=m;recipients[i].contactAccount='';renderAll();}
+function updField(i,f,v){recipients[i][f]=v;}
+function updContactAcc(i,v){recipients[i].contactAccount=v;}
+
+function selectSlot(ri,s){
+  const r=recipients[ri];
+  const needed=r.parts.length||1;
+  if(r.selSlots.includes(s)){
+    // 只能移除最後一個
+    if(r.selSlots[r.selSlots.length-1]===s){r.selSlots.pop();renderAll();}
+    else showToast('只能移除最後選的時段');
+    return;
+  }
+  if(r.selSlots.length>=needed){showToast(`已選滿 ${needed} 個時段（共 ${needed} 個部位）`);return;}
+  // 必須連續
+  const slots=SLOTS_BY_SEG[r.selSeg]||[];
+  const last=r.selSlots[r.selSlots.length-1];
+  if(last){const lastIdx=slots.indexOf(last);const sIdx=slots.indexOf(s);if(sIdx!==lastIdx+1){showToast('請選擇連續的時段');return;}}
+  r.selSlots.push(s);
+  renderAll();
+}
+
+// ── 取得已被預約的時段（排除本人其他被傳情人已選的時段） ──
+function getBkSlots(bed,seg,dayIdx){
+  return bookings.filter(b=>b.bed===bed&&b.segment===seg&&b.dayIdx===dayIdx).map(b=>b.time);
+}
+// 其他被傳情人已選的時段（同床同段同天）
+function getOtherSelSlots(myIdx,bed,seg,dayIdx){
+  const result=[];
+  recipients.forEach((r,i)=>{
+    if(i===myIdx)return;
+    if(r.selTh&&r.selTh.bed===bed&&r.selSeg===seg&&r.selDay===dayIdx)
+      r.selSlots.forEach(s=>result.push(s));
+  });
+  return result;
+}
+
+function gClass(g){return g==='男'?'male':g==='女'?'female':'other';}
+function gLabel(g){const n=g?g.replace('治療師','服務人員'):'';return n==='男'?'男服務人員':n==='女'?'女服務人員':n||''}
+
+// ── 渲染 ──────────────────────────────────────────────────────
+function renderAll(){
+  renderRecipients();
+  renderPrice();
+  // 更新新增按鈕
+  const btn=document.getElementById('add-btn');
+  if(btn){
+    const rem=3-recipients.length;
+    btn.style.display=rem<=0?'none':'block';
+    if(rem>0)btn.textContent=`＋ 新增被傳情人（還可新增 ${rem} 位）`;
+  }
+}
+
+function renderRecipients(){
+  const container=document.getElementById('recipients-list');
+  if(!container)return;
+  container.innerHTML=recipients.map((r,i)=>renderRecipientCard(r,i)).join('');
+}
+
+function renderRecipientCard(r,i){
+  const needed=r.parts.length||0;
+  const ths=r.selTh?null:(schedule[r.selDay]||{});
+  const thsForDaySeg=Object.entries(schedule[r.selDay]||{})
+    .filter(([bed,segs])=>segs[r.selSeg])
+    .map(([bed,segs])=>({bed,segment:r.selSeg,...segs[r.selSeg]}));
+
+  // 時段
+  const slots=SLOTS_BY_SEG[r.selSeg]||[];
+  const bkd=r.selTh?getBkSlots(r.selTh.bed,r.selSeg,r.selDay):[];
+  const otherSel=r.selTh?getOtherSelSlots(i,r.selTh.bed,r.selSeg,r.selDay):[];
+
+  // 選擇狀態摘要
+  let summaryHtml='';
+  if(needed===0){
+    summaryHtml=`<div class="sel-summary sel-summary-warn">請先選擇放鬆部位，系統將自動計算所需時段數</div>`;
+  }else if(!r.selTh){
+    summaryHtml=`<div class="sel-summary sel-summary-warn">需選 ${needed} 個時段（${needed} 個部位），請選擇服務人員</div>`;
+  }else if(r.selSlots.length<needed){
+    summaryHtml=`<div class="sel-summary sel-summary-warn">${r.selTh.name}（${r.selTh.bed}床）· 還需選 ${needed-r.selSlots.length} 個時段</div>`;
+  }else{
+    summaryHtml=`<div class="sel-summary sel-summary-ok">✓ ${r.selTh.name}（${r.selTh.bed}床）· ${r.selSlots[0]} 起共 ${needed} 個時段</div>`;
+  }
+
+  return`<div class="recipient-card">
+    <div class="rc-header">
+      <span class="rc-num">被傳情人 ${i+1}</span>
+      <button class="rc-remove" onclick="removeRecipient(${i})">移除</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label class="required">姓名</label><input type="text" value="${r.name}" oninput="updField(${i},'name',this.value)" placeholder="被傳情人姓名"></div>
+      <div class="form-group"><label class="required">臉書連結</label><input type="url" value="${r.fb}" oninput="updField(${i},'fb',this.value)" placeholder="https://facebook.com/..."></div>
+    </div>
+
+    <!-- 部位 -->
+    <div class="rc-section">
+      <div class="rc-section-label">放鬆部位（可多選）</div>
+      <div class="parts-group">
+        ${PARTS.map(p=>`<div class="part-btn ${r.parts.includes(p)?'selected':''}" onclick="togglePart(${i},'${p}')">
+          ${p}<div style="font-size:10px;color:var(--stone-light);margin-top:2px;">NT$65</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- 聯絡方式 -->
+    <div class="rc-section">
+      <div class="rc-section-label">通知被傳情人的聯絡方式</div>
+      <div class="contact-opts">
+        <div class="contact-opt ${r.contactMethod==='fb'?'selected':''}" onclick="setContact(${i},'fb')">Facebook</div>
+        <div class="contact-opt ${r.contactMethod==='line'?'selected':''}" onclick="setContact(${i},'line')">LINE</div>
+        <div class="contact-opt ${r.contactMethod==='gmail'?'selected':''}" onclick="setContact(${i},'gmail')">Gmail<div class="contact-opt-sub">系統自動發送通知信</div></div>
+      </div>
+      ${r.contactMethod==='line'?`<div style="margin-top:8px;"><label style="font-size:12px;color:var(--stone);font-weight:500;">LINE ID</label><input type="text" value="${r.contactAccount||''}" oninput="updContactAcc(${i},this.value)" placeholder="被傳情人的 LINE ID" style="margin-top:5px;"></div>`:''}
+      ${r.contactMethod==='gmail'?`<div style="margin-top:8px;"><label style="font-size:12px;color:var(--stone);font-weight:500;">Email</label><input type="email" value="${r.contactAccount||''}" oninput="updContactAcc(${i},this.value)" placeholder="被傳情人的 Email" style="margin-top:5px;"></div>`:''}
+    </div>
+
+    <!-- 日期+時段選擇 -->
+    <div class="rc-section">
+      <div class="rc-section-label">選擇日期</div>
+      <div class="day-tabs">
+        ${DAYS.map((d,di)=>`<div class="day-tab ${r.selDay===di?'active':''}" onclick="setDay(${i},${di})">${d.substring(0,4)}</div>`).join('')}
+      </div>
+      <div class="rc-section-label">選擇時段</div>
+      <div class="segment-group">
+        <div class="segment-btn ${r.selSeg==='19-20'?'active':''}" onclick="setSeg(${i},'19-20')">
+          <div class="segment-btn-time">19:00 — 20:00</div><div class="segment-btn-label">前段</div>
+        </div>
+        <div class="segment-btn ${r.selSeg==='20-21'?'active':''}" onclick="setSeg(${i},'20-21')">
+          <div class="segment-btn-time">20:00 — 21:00</div><div class="segment-btn-label">後段</div>
+        </div>
+      </div>
+      <div class="rc-section-label">選擇服務人員</div>
+      ${thsForDaySeg.length?
+        `<div class="therapist-grid">${thsForDaySeg.map(t=>{
+          const gc=gClass(t.gender);
+          const isSel=r.selTh&&r.selTh.bed===t.bed;
+          const bkd2=getBkSlots(t.bed,r.selSeg,r.selDay);
+          const free=slots.length-bkd2.length;
+          return`<div class="th-card ${isSel?'selected':''}" onclick="setTh(${i},${JSON.stringify(t).replace(/"/g,"'")})">
+            <div class="th-avatar ${gc}">${t.name.slice(0,1)}</div>
+            <div class="th-name">${t.name}</div>
+            <div class="th-bed">${t.bed} 床</div>
+            <span class="th-gender ${gc}">${gLabel(t.gender)}</span>
+            <div style="font-size:10px;color:var(--stone-light);margin-top:4px;">${free} 個空檔</div>
+          </div>`;
+        }).join('')}</div>`
+        :'<div style="color:var(--stone-light);font-size:13px;">本日此時段無排班</div>'}
+
+      ${r.selTh&&needed>0?`
+      <div style="margin-top:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span class="rc-section-label" style="margin:0;">選擇時段（需選 ${needed} 個連續時段）</span>
+          <span class="live-indicator"><span class="live-dot"></span>即時</span>
+        </div>
+        <div class="slots-grid">${slots.map((s,si)=>{
+          const isBooked=bkd.includes(s);
+          const isOther=otherSel.includes(s);
+          const isSel=r.selSlots.includes(s);
+          const last=r.selSlots[r.selSlots.length-1];
+          const lastIdx=last?slots.indexOf(last):-1;
+          const canAdd=!isBooked&&!isOther&&!isSel&&(r.selSlots.length===0||si===lastIdx+1)&&r.selSlots.length<needed;
+          if(isBooked)return`<div class="slot-row"><div class="slot-label">${s}</div><div class="slot-btn booked">已預約</div></div>`;
+          if(isOther)return`<div class="slot-row"><div class="slot-label">${s}</div><div class="slot-btn conflict">其他被傳情人已選</div></div>`;
+          if(isSel)return`<div class="slot-row"><div class="slot-label">${s}</div><div class="slot-btn selected" onclick="selectSlot(${i},'${s}')">已選擇 ✕</div></div>`;
+          if(canAdd)return`<div class="slot-row"><div class="slot-label">${s}</div><div class="slot-btn available" onclick="selectSlot(${i},'${s}')">可預約</div></div>`;
+          return`<div class="slot-row"><div class="slot-label">${s}</div><div class="slot-btn locked">${r.selSlots.length>=needed?'已選滿':'請先選前一格'}</div></div>`;
+        }).join('')}</div>
+      </div>`:''}
+      ${summaryHtml}
+    </div>
+  </div>`;
+}
+
+function renderPrice(){
+  const a=document.getElementById('price-area');
+  if(!a)return;
+  const valid=recipients.filter(r=>r.parts.length>0);
+  if(!valid.length){a.innerHTML='<div style="color:var(--stone-light);font-size:13px;">請先為被傳情人選擇部位</div>';return;}
+  let tot=0;
+  const rows=valid.map(r=>{
+    const amt=r.parts.length*PRICE;
+    tot+=amt;
+    return`<div class="price-row"><span>${r.name||'被傳情人'}（${r.parts.join('、')} × ${r.parts.length} 個時段）</span><span>NT$${amt}</span></div>`;
+  }).join('');
+  a.innerHTML=`<div class="price-calc">${rows}<div class="price-row total"><span>預估合計</span><span>NT$${tot}</span></div><div style="font-size:11px;color:var(--stone);margin-top:6px;">打卡折扣（每部位 -NT$5）於現場繳費時確認套用</div></div>`;
+}
+
+// ── 送出 ──────────────────────────────────────────────────────
+async function submitBooking(){
+  const bn=document.getElementById('booker-name').value.trim();
+  const bdept=document.getElementById('booker-dept').value.trim();
+  const bp=document.getElementById('booker-phone').value.trim();
+  const bfb=document.getElementById('booker-fb').value.trim();
+  const be=document.getElementById('booker-email').value.trim();
+  if(!bn||!bdept||!bp||!bfb||!be){showToast('請填寫傳情人姓名、系級、電話、臉書連結與 Email');return;}
+  if(!recipients.length){showToast('請至少新增一位被傳情人');return;}
+  for(const r of recipients){
+    if(!r.name){showToast('請填寫所有被傳情人姓名');return;}
+    if(!r.parts.length){showToast(`${r.name||'被傳情人'}請選擇至少一個部位`);return;}
+    if(!r.selTh){showToast(`${r.name||'被傳情人'}請選擇服務人員`);return;}
+    if(r.selSlots.length<r.parts.length){showToast(`${r.name||'被傳情人'}還需選 ${r.parts.length-r.selSlots.length} 個時段`);return;}
+  }
+
+  // 防衝突檢查
+  showLo('確認時段是否仍空閒...');
+  try{
+    const latest=await apiFetch('getBookings');
+    if(latest?.bookings){
+      const fresh=parseBk(latest.bookings);
+      for(const r of recipients){
+        const conflict=r.selSlots.find(s=>
+          fresh.some(b=>b.bed===r.selTh.bed&&b.segment===r.selSeg&&b.dayIdx===r.selDay&&b.time===s)
+        );
+        if(conflict){
+          hideLo();
+          bookings=fresh;
+          r.selSlots=[];
+          renderAll();
+          showToast(`⚠️ ${r.name} 的時段 ${conflict} 剛被搶走！請重新選擇。`,5000);
+          return;
+        }
+      }
+    }
+  }catch(e){}
+
+  const notes=document.getElementById('notes').value;
+  const submittedBookings=[];
+  showLo('送出預約中...');
+
+  for(const r of recipients){
+    for(let si=0;si<r.selSlots.length;si++){
+      const s=r.selSlots[si];
+      const amt=PRICE; // 每個時段一個部位 NT$65
+      const bk={booker:bn,bookerDept:bdept,bookerPhone:bp,bookerFb:bfb,bookerEmail:be,
+        recipient:r.name,recipientFb:r.fb,
+        parts:[r.parts[si]||r.parts[0]], // 每個時段對應一個部位
+        allParts:r.parts, // 完整部位清單（供發信用）
+        totalSlots:r.selSlots.length, // 總時段數
+        startTime:r.selSlots[0], // 開始時間
+        therapistName:r.selTh.name,therapistGender:r.selTh.gender||'',
+        bed:r.selTh.bed,segment:r.selSeg,dayIdx:r.selDay,time:s,
+        amount:amt,checkin:false,payment:'unpaid',type:'online',
+        contactMethod:r.contactMethod,contactAccount:r.contactAccount||'',
+        notified:false,notes:si===0?notes:`【第${si+1}部位】${notes}`};
+      const res=await apiPost({action:'addBooking',booking:bk});
+      const id=res?.id||('L'+Date.now()+si);
+      bookings.push({...bk,id});
+      if(si===0)submittedBookings.push({...r,id,firstSlot:s,selTh:r.selTh,selSlots:r.selSlots,selDay:r.selDay,selSeg:r.selSeg});
+    }
+  }
+  hideLo();
+
+  // 顯示確認頁
+  document.getElementById('main-page').style.display='none';
+  document.getElementById('confirm-page').style.display='block';
+  window.scrollTo(0,0);
+
+  const totalAmt=submittedBookings.reduce((s,r)=>s+r.parts.length*PRICE,0);
+  const segLabel=s=>s==='19-20'?'前段 19:00—20:00':'後段 20:00—21:00';
+
+  document.getElementById('confirm-content').innerHTML=`
+    <div style="display:grid;gap:8px;">
+      <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-light);font-size:13px;">
+        <span style="color:var(--stone);min-width:80px;">傳情人</span><span style="font-weight:500;">${bn}</span>
+      </div>
+      ${submittedBookings.map(r=>`
+      <div style="background:var(--cream);border-radius:8px;padding:12px;font-size:13px;margin-top:4px;">
+        <div style="font-weight:500;margin-bottom:6px;">被傳情人：${r.name}</div>
+        <div style="color:var(--stone);">部位：${r.parts.join('、')}</div>
+        <div style="color:var(--stone);">${DAYS[r.selDay]} · ${segLabel(r.selSeg)}</div>
+        <div style="color:var(--stone);">服務人員：${r.selTh.name}（${r.selTh.bed}床）${r.selTh.gender?` · ${r.selTh.gender}服務人員`:''}</div>
+        <div style="color:var(--stone);">時間：${r.selSlots[0]} — ${r.selSlots[r.selSlots.length-1].split('-')[1]}（${r.parts.length} 個時段，${r.parts.length*10} 分鐘）</div>
+        <div style="color:var(--stone);">費用：NT$${r.parts.length*PRICE}</div>
+        <div style="font-size:11px;color:var(--stone-light);margin-top:4px;">聯絡：${r.contactMethod==='fb'?'Facebook Messenger':r.contactMethod==='line'?`LINE（${r.contactAccount||''}）`:`Gmail（${r.contactAccount||''}）`}</div>
+      </div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:500;">
+        <span>預估合計</span><span>NT$${totalAmt}</span>
+      </div>
+    </div>`;
+
+  // Email 確認信由 Apps Script 自動發送，不需要在前端處理
+}
+
+// ── 自動更新 ─────────────────────────────────────────────────
+async function silentRefresh(){
+  if(!SCRIPT_URL||SCRIPT_URL==='在此貼上你的網址')return;
+  try{
+    const bRes=await fetch(`${SCRIPT_URL}?action=getBookings&_t=${Date.now()}`).then(r=>r.json());
+    if(bRes?.bookings){bookings=parseBk(bRes.bookings);renderAll();}
+  }catch(e){}
+}
+
+// ── 初始化 ────────────────────────────────────────────────────
+// 渲染活動資訊橫幅
+function renderBanner(){
+  const b=document.getElementById('info-banner');
+  if(!b)return;
+  document.title=CFG.activityName+' · 傳情預約';
+  b.innerHTML=`
+    <div style="font-size:12px;font-weight:500;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;">成大物治週 · 軟組織放鬆 活動資訊</div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item"><span class="info-label">價格</span><span class="info-value">NT$${CFG.price} / 部位，FB / IG 打卡可折 $${CFG.discount}</span></div>
+        <div class="info-item"><span class="info-label">時長</span><span class="info-value">${CFG.slotMin} 分鐘 / 部位</span></div>
+        <div class="info-item"><span class="info-label">活動日期</span><span class="info-value">${CFG.dates}，${CFG.time}</span></div>
+        <div class="info-item"><span class="info-label">地點</span><span class="info-value">${CFG.location}</span></div>
+      </div>
+      <div>
+        <div class="info-item"><span class="info-label">繳費期限</span><span class="info-value">${CFG.payDeadline}</span></div>
+        <div class="info-item"><span class="info-label">放鬆部位</span><span class="info-value">${PARTS.map(p=>'<span class="tag">'+p+'</span>').join('')}</span></div>
+      </div>
+    </div>
+    <hr class="info-divider">
+    <div class="notice-list">
+      <span>1. ${CFG.notice1}</span>
+      <span>2. ${CFG.notice2}</span>
+      <span>3. ${CFG.notice3}</span>
+    </div>`;
+}
+
+loadData();
+addRecipient();
+renderBanner();
+setInterval(silentRefresh,30000);
+</script>
+</body>
+</html>

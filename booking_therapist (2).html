@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>筋夾！？皮洽鬆？ · 服務人員系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#B8955A;--gold-light:#D4B483;--gold-pale:#F5EDD8;--ink:#1A1814;--ink-soft:#3D3830;--stone:#7A7168;--stone-light:#ADA49B;--cream:#FAF7F2;--cream-dark:#F0EBE0;--white:#FFFFFF;--red-soft:#C0392B;--red-pale:#FCEAEA;--green-soft:#27AE60;--green-pale:#E8F5EE;--border:rgba(184,149,90,0.25);--border-light:rgba(184,149,90,0.12);--shadow:0 2px 20px rgba(26,24,20,0.06);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh;}
+.top-nav{background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(184,149,90,0.3);min-height:54px;}
+.brand-en{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;color:var(--gold-light);letter-spacing:0.06em;}
+.live-indicator{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green-soft);font-weight:500;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green-soft);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.page{padding:24px 32px;max-width:860px;margin:0 auto;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:var(--shadow);}
+.card-title{font-size:12px;font-weight:500;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border-light);}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:15px 17px;box-shadow:var(--shadow);}
+.stat-label{font-size:11px;color:var(--stone);letter-spacing:0.10em;margin-bottom:6px;text-transform:uppercase;}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--ink);line-height:1;}
+.stat-sub{font-size:11px;color:var(--stone-light);margin-top:4px;}
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:500;}
+.badge-paid{background:var(--green-pale);color:#1A6B3A;}
+.badge-unpaid{background:var(--red-pale);color:#922B21;}
+.search-wrap{position:relative;max-width:480px;}
+.search-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:13px 18px;font-size:16px;font-family:'Noto Sans TC',sans-serif;color:var(--ink);background:var(--white);outline:none;transition:border-color 0.2s;}
+.search-input:focus{border-color:var(--gold);}
+.search-input::placeholder{color:var(--stone-light);}
+.suggestion-box{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:100;overflow:hidden;display:none;}
+.suggestion-item{padding:11px 18px;cursor:pointer;font-size:14px;color:var(--ink-soft);border-bottom:1px solid var(--border-light);transition:background 0.15s;}
+.suggestion-item:last-child{border-bottom:none;}
+.suggestion-item:hover{background:var(--gold-pale);}
+.no-result{text-align:center;padding:40px 20px;color:var(--stone-light);}
+.no-result-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--stone);margin-bottom:8px;}
+/* 天 + 段區塊 */
+.day-block{margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.day-header{background:var(--ink);color:var(--gold-light);padding:10px 16px;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:space-between;}
+.day-header-meta{display:flex;gap:8px;align-items:center;}
+.day-header-bed{font-size:11px;color:var(--gold);background:rgba(184,149,90,0.22);padding:3px 10px;border-radius:10px;}
+.day-header-seg{font-size:11px;color:var(--stone-light);background:rgba(255,255,255,0.08);padding:3px 10px;border-radius:10px;}
+.day-slots{padding:10px 14px;}
+.slot-row{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;margin-bottom:5px;}
+.slot-label{font-size:12px;color:var(--stone);text-align:right;padding-right:6px;font-weight:500;}
+.slot-booked{background:var(--red-pale);border:1px solid rgba(192,57,43,0.2);border-radius:8px;padding:9px 13px;}
+.slot-free{background:var(--green-pale);border:1px solid rgba(39,174,96,0.18);border-radius:8px;padding:9px 13px;color:var(--green-soft);font-size:13px;}
+.slot-recipient{font-weight:500;font-size:13px;color:#922B21;}
+.slot-parts{font-size:11px;margin-top:3px;}
+.slot-meta{font-size:11px;margin-top:3px;color:var(--stone);}
+.loading-overlay{position:fixed;inset:0;background:rgba(26,24,20,0.4);display:none;align-items:center;justify-content:center;z-index:9000;}
+.loading-box{background:var(--white);border-radius:12px;padding:24px 32px;text-align:center;}
+.loading-spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 10px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--gold-light);border:1px solid var(--gold);border-radius:10px;padding:12px 22px;font-size:13px;z-index:9999;transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}.page{padding:16px}.slot-row{grid-template-columns:90px 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="brand-en" id="brand-en">筋夾！？皮洽鬆？ · 服務人員系統</span>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="live-indicator"><span class="live-dot"></span>即時更新</span>
+    <span style="font-size:11px;color:var(--stone-light);">(<span id="refresh-countdown">30</span> 後自動更新)</span>
+    <button onclick="loadData()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(184,149,90,0.4);color:var(--gold-light);padding:6px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">重新整理</button>
+  </div>
+</nav>
+
+<div class="loading-overlay" id="lo" style="display:none;"><div class="loading-box"><div class="loading-spinner"></div><div style="font-size:13px;color:var(--stone);">載入中...</div></div></div>
+<div class="toast" id="toast"></div>
+
+<div class="page">
+  <div style="margin-bottom:28px;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--ink);margin-bottom:3px;letter-spacing:0.04em;">服務員工作台</div>
+    <div style="font-size:13px;color:var(--stone);margin-bottom:18px;">輸入你的姓名，查看本週所有排程與預約資訊</div>
+    <div class="search-wrap">
+      <input class="search-input" id="name-input" type="text" placeholder="輸入服務員姓名…" oninput="onSearchInput(this.value)" autocomplete="off">
+      <div class="suggestion-box" id="suggestion-box"></div>
+    </div>
+    <div style="font-size:12px;color:var(--stone-light);margin-top:8px;" id="search-hint">資料載入中…</div>
+  </div>
+  <div id="result-area"></div>
+</div>
+
+<script>
+// ★【活動日期 — 整個系統只需改這一行】每年沿用時改這裡即可。格式：'月/日(週)'。
+const DAYS=['5/11(一)','5/12(二)','5/13(三)','5/14(四)','5/15(五)'];
+const SEGS=['19-20','20-21'];
+const SEG_LABEL={'19-20':'前段 19:00—20:00','20-21':'後段 20:00—21:00'};
+function buildSlots(){const s=[];let h=19,m=0;for(let i=0;i<10;i++){const st=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;let eh=h,em=m+12;if(em>=60){eh++;em-=60;}s.push(`${st}-${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`);m+=12;if(m>=60){h++;m-=60;}}return s;}
+const ALL_SLOTS=buildSlots();
+const SLOTS_BY_SEG={'19-20':ALL_SLOTS.slice(0,5),'20-21':ALL_SLOTS.slice(5,10)};
+
+// ↓↓↓ 把你的 Apps Script 網址貼在這裡（只需填一次）↓↓↓
+// ================================================================
+// ⚙️ 設定區 — 所有需要修改的內容都在這裡
+// ================================================================
+
+// 【必填】Apps Script 網址
+let SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrxTlaoBOVqh-EIJovrnqZL0UQ7wd-9ksaqewEGyVI7lWiwRuwCJEHkFFQZGSKPzFU6g/exec';
+
+// 【必填】安全密鑰，必須與 Apps Script 裡的 SECRET_KEY 一致
+const SECRET_KEY = 'DCPT116';
+
+// 【活動資訊】
+const CFG = {
+  activityName: '筋夾！？皮洽鬆？',
+  price: 65,     // 每部位價格（NT$）
+  discount: 5,   // 打卡折扣（NT$）
+};
+
+// 同步標題：改上面的 CFG.activityName 即可，導覽列與分頁標題會一起更新
+(function(){
+  const SUFFIX = ' · 服務人員系統';
+  document.title = CFG.activityName + SUFFIX;
+  const be = document.getElementById('brand-en');
+  if (be) be.textContent = CFG.activityName + SUFFIX;
+})();
+
+// ================================================================
+
+function apiPost(d){return fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({...d,secret:SECRET_KEY})}).then(r=>r.json()).catch(()=>null);}
+function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+// ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+let schedule=[];  // schedule[dayIdx] = {bed: {seg: {name,gender}}}
+let bookings=[];
+let currentName='';
+
+async function loadData(){
+  document.getElementById('lo').style.display='flex';
+  try{
+    const[bRes,tRes]=await Promise.all([
+      fetch(`${SCRIPT_URL}?action=getBookings`).then(r=>r.json()),
+      fetch(`${SCRIPT_URL}?action=getTherapists`).then(r=>r.json())
+    ]);
+    if(bRes?.bookings)bookings=parseBk(bRes.bookings);
+    if(tRes?.schedule)schedule=tRes.schedule;
+    const names=allNames();
+    document.getElementById('search-hint').textContent=names.length?`共 ${names.length} 位服務員已排班，輸入姓名搜尋`:'尚未設定排班，請聯絡工作人員';
+    if(currentName)renderResult(currentName);
+  }catch(e){document.getElementById('search-hint').textContent='連線失敗，請確認網址';}
+  document.getElementById('lo').style.display='none';
+}
+
+function parseBk(arr){
+  return arr.map(b=>({
+    id:b['編號'],booker:b['傳情人'],recipient:b['被傳情人'],
+    parts:typeof b['部位']==='string'?b['部位'].split(',').filter(Boolean):(b['部位']||[]),
+    therapistName:b['服務人員名稱']||'',therapistGender:b['性別']||'',
+    bed:b['床位']||'',segment:b['時段區間']||'',
+    dayIdx:parseInt(b['日期索引'])||0,time:b['時段'],
+    amount:parseInt(b['金額'])||0,payment:b['繳費狀態']||'unpaid',
+    notes:b['備注']||''
+  }));
+}
+
+function allNames(){
+  const seen=new Set();
+  (schedule||[]).forEach(dayMap=>{
+    if(!dayMap)return;
+    Object.values(dayMap).forEach(segs=>{
+      Object.values(segs).forEach(th=>{if(th?.name)seen.add(th.name);});
+    });
+  });
+  return[...seen].sort();
+}
+
+function onSearchInput(val){
+  const v=val.trim();
+  const box=document.getElementById('suggestion-box');
+  if(!v){box.style.display='none';document.getElementById('result-area').innerHTML='';currentName='';return;}
+  const matched=allNames().filter(n=>n.includes(v));
+  if(matched.length){
+    box.innerHTML=matched.map(n=>{
+      const idx=n.indexOf(v);
+      const hi=n.slice(0,idx)+`<strong style="color:var(--gold);">${v}</strong>`+n.slice(idx+v.length);
+      return`<div class="suggestion-item" onclick="selectName('${n}')">${hi}</div>`;
+    }).join('');
+    box.style.display='block';
+  }else{
+    box.style.display='none';
+  }
+  renderResult(v);
+}
+
+function selectName(name){
+  currentName=name;
+  document.getElementById('name-input').value=name;
+  document.getElementById('suggestion-box').style.display='none';
+  renderResult(name);
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrap'))document.getElementById('suggestion-box').style.display='none';
+});
+
+function renderResult(name){
+  currentName=name;
+  const area=document.getElementById('result-area');
+
+  // 找出這個名字在哪些天、哪些床、哪些段
+  // entries: [{dayIdx, bed, segment}]
+  const entries=[];
+  (schedule||[]).forEach((dayMap,d)=>{
+    if(!dayMap)return;
+    Object.entries(dayMap).forEach(([bed,segs])=>{
+      Object.entries(segs).forEach(([seg,th])=>{
+        if(th?.name===name)entries.push({dayIdx:d,bed,segment:seg});
+      });
+    });
+  });
+  // 排序：先按天，再按床，再按段
+  entries.sort((a,b)=>a.dayIdx-b.dayIdx||a.bed.localeCompare(b.bed)||a.segment.localeCompare(b.segment));
+
+  if(!entries.length){
+    area.innerHTML=`<div class="no-result"><div class="no-result-title">找不到「${name}」的排班</div><div style="font-size:13px;">請確認姓名是否正確，或等待管理員設定排班</div></div>`;
+    return;
+  }
+
+  // 統計：這個人負責的所有預約
+  const myBk=bookings.filter(b=>b.therapistName===name);
+  const totalSlots=entries.length*5; // 每段5個時段
+
+  let html=`<div class="stats-row">
+    <div class="stat-card"><div class="stat-label">本週排班</div><div class="stat-value">${entries.length} 段</div><div class="stat-sub">共 ${totalSlots} 個時段</div></div>
+    <div class="stat-card"><div class="stat-label">已預約</div><div class="stat-value" style="color:var(--red-soft);">${myBk.length}</div><div class="stat-sub">剩餘 ${totalSlots-myBk.length} 個空檔</div></div>
+    <div class="stat-card"><div class="stat-label">本週應收</div><div class="stat-value" style="font-size:20px;">NT$${myBk.reduce((s,b)=>s+b.amount,0).toLocaleString()}</div><div class="stat-sub">服務 ${myBk.reduce((s,b)=>s+b.parts.length,0)} 個部位</div></div>
+  </div>`;
+
+  entries.forEach(({dayIdx,bed,segment})=>{
+    const slots=SLOTS_BY_SEG[segment]||[];
+    const segBk=bookings.filter(b=>b.therapistName===name&&b.bed===bed&&b.segment===segment&&b.dayIdx===dayIdx);
+    // 全部時段（跨段）供續時查詢下一格用
+    const allDayBk=bookings.filter(b=>b.therapistName===name&&b.bed===bed&&b.dayIdx===dayIdx);
+
+    const slotsHtml=slots.map((s,si)=>{
+      const bk=segBk.find(b=>b.time===s);
+      if(bk){
+        // 下一個時段
+        const nextSlot=ALL_SLOTS[ALL_SLOTS.indexOf(s)+1]||null;
+        const nextFree=nextSlot&&!allDayBk.find(b=>b.time===nextSlot);
+        // 下一個時段的段落
+        const nextSeg=nextSlot&&(ALL_SLOTS.indexOf(nextSlot)<5?'19-20':'20-21');
+        return`<div class="slot-row">
+          <div class="slot-label">${s}</div>
+          <div class="slot-booked">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+              <div style="flex:1;">
+                <div class="slot-recipient">${bk.recipient}</div>
+                <div class="slot-parts">${bk.parts.map(p=>`<span style="background:rgba(192,57,43,0.1);color:#922B21;padding:2px 7px;border-radius:7px;font-size:11px;margin-right:3px;">${p}</span>`).join('')}</div>
+                <div class="slot-meta">傳情人：${bk.booker} · NT$${bk.amount} · <span style="color:${bk.payment==='paid'?'var(--green-soft)':'var(--red-soft)'}">${bk.payment==='paid'?'已繳費':'未繳費'}</span></div>
+                ${bk.notes&&bk.notes!=='【現場報名】'?`<div class="slot-meta">備注：${bk.notes}</div>`:''}
+              </div>
+              ${nextSlot?`<button onclick="addExtension('${bk.id}','${nextSlot}','${nextSeg}',${dayIdx},'${bed}')" style="flex-shrink:0;padding:5px 10px;border-radius:6px;font-size:11px;font-family:'Noto Sans TC',sans-serif;cursor:pointer;border:1px solid;white-space:nowrap;transition:all 0.2s;${nextFree?'background:var(--green-pale);color:#1A6B3A;border-color:rgba(39,174,96,0.4);':'background:var(--red-pale);color:#922B21;border-color:rgba(192,57,43,0.3);cursor:not-allowed;'}">＋ 續時<div style="font-size:9px;margin-top:1px;">${nextSlot}</div></button>`:''}
+            </div>
+          </div>
+        </div>`;
+      }
+      return`<div class="slot-row"><div class="slot-label">${s}</div><div class="slot-free">空閒</div></div>`;
+    }).join('');
+
+    html+=`<div class="day-block">
+      <div class="day-header">
+        <span>${DAYS[dayIdx]}</span>
+        <div class="day-header-meta">
+          <span class="day-header-bed">${bed} 床</span>
+          <span class="day-header-seg">${SEG_LABEL[segment]||segment}</span>
+        </div>
+      </div>
+      <div class="day-slots">${slotsHtml}</div>
+    </div>`;
+  });
+
+  area.innerHTML=html;
+}
+
+// ── 音效（"叮"）───────────────────────────────────────────────
+function playDing(){
+  try{
+    const c=new(window.AudioContext||window.webkitAudioContext)();
+    const notes=[659,784,1047];
+    notes.forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);
+      o.type='sine';
+      const t=c.currentTime+i*0.15;
+      o.frequency.setValueAtTime(f,t);
+      g.gain.setValueAtTime(0.38,t);
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.5);
+      o.start(t);o.stop(t+0.5);
+    });
+  }catch(e){}
+}
+
+// ── 續時功能（固定 NT$65 / 一個時段）────────────────────────
+async function addExtension(origId, nextSlot, nextSeg, dayIdx, bed){
+  const latest=await fetch(`${SCRIPT_URL}?action=getBookings&_t=${Date.now()}`).then(r=>r.json()).catch(()=>null);
+  if(latest?.bookings){
+    const fresh=latest.bookings.map(b=>({
+      bed:(b['床位']||''),segment:(b['時段區間']||''),
+      dayIdx:parseInt(b['日期索引'])||0,time:(b['時段']||''),
+      therapistName:(b['服務人員名稱']||'')
+    }));
+    const conflict=fresh.some(b=>b.bed===bed&&b.segment===nextSeg&&b.dayIdx===dayIdx&&b.time===nextSlot);
+    if(conflict){
+      showToast('此時段已被預約，無法續時');
+      renderResult(currentName);
+      return;
+    }
+  }
+
+  const orig=bookings.find(b=>b.id===origId);
+  if(!orig){showToast('找不到原始預約');return;}
+
+  showToast('正在新增續時預約...');
+  const bk={
+    booker:orig.booker,bookerPhone:orig.bookerPhone||'',bookerFb:orig.bookerFb||'',
+    recipient:orig.recipient,recipientFb:orig.recipientFb||'',
+    parts:orig.parts,therapistName:orig.therapistName,therapistGender:orig.therapistGender||'',
+    bed:bed,segment:nextSeg,dayIdx:dayIdx,time:nextSlot,
+    amount:65,  // 固定 NT$65
+    checkin:false,payment:'unpaid',type:'walkin',
+    contactMethod:orig.contactMethod||'fb',contactAccount:orig.contactAccount||'',
+    notified:false,notes:'【續時】原預約 '+origId
+  };
+  const res=await apiPost({action:'addBooking',booking:bk});
+  if(res?.success||res?.id){
+    bookings.push({...bk,id:res?.id||('EXT'+Date.now())});
+    showToast(`✓ 續時成功！${orig.recipient} · ${nextSlot} · NT$65`);
+    // LINE 群組通知
+    apiPost({action:'notifyExtension',recipient:orig.recipient,bed:orig.bed,newSlot:nextSlot,therapistName:orig.therapistName});
+    renderResult(currentName);
+  }else{
+    showToast('續時失敗，請重試');
+  }
+}
+
+// 靜默更新（不顯示 loading，避免干擾）
+let prevBookingCount=0;
+async function silentRefresh(){
+  const url=SCRIPT_URL||'';
+  if(!url||url==='在此貼上你的網址')return;
+  try{
+    const bRes=await fetch(`${url}?action=getBookings&_t=${Date.now()}`).then(r=>r.json());
+    if(bRes?.bookings){
+      const newBk=parseBk(bRes.bookings);
+      // 有新預約時播放音效
+      if(prevBookingCount>0&&newBk.length>prevBookingCount)playDing();
+      prevBookingCount=newBk.length;
+      bookings=newBk;
+      if(currentName)renderResult(currentName);
+      countdown=30;
+    }
+  }catch(e){console.warn('自動更新失敗',e);}
+}
+
+let countdown=30;
+function updateCountdown(){
+  countdown--;
+  const el=document.getElementById('refresh-countdown');
+  if(el)el.textContent=countdown+'s';
+  if(countdown<=0){countdown=30;silentRefresh();}
+}
+
+if(SCRIPT_URL&&SCRIPT_URL!=='在此貼上你的網址'){
+  loadData();
+  setInterval(updateCountdown,1000);
+}else{
+  document.getElementById('search-hint').textContent='請先在程式碼中填入 Apps Script 網址';
+}
+</script>
+</body>
+</html>
