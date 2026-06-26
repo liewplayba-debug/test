@@ -407,11 +407,11 @@ const SECRET_KEY = 'DCPT116';
 
 // 【活動資訊】
 const CFG = {
-  activityName:  '筋夾！？皮洽鬆？',
+  activityName:  '測試',
   price:         65,     // 每部位價格（NT$）
   discount:      5,      // 打卡折扣（NT$）
   slotMin:       10,     // 每時段分鐘數
-  dates:         '5/11(一) — 5/15(五)',
+  dates:         '6/11(一) — 6/15(五)',
   time:          '19:00—21:00',
   location:      '醫學院 104 多功能實習教室',
 };
@@ -428,7 +428,7 @@ const CFG = {
 
 // ★【活動日期 — 整個系統只需改這一行】每年沿用時改這裡即可。
 //   格式：'月/日(週)'。上方日期分頁、下方排班表頭都會自動跟著變。
-const DAYS=['5/11(一)','5/12(二)','5/13(三)','5/14(四)','5/15(五)'];
+const DAYS=['6/11(一)','6/12(二)','5/13(三)','6/14(四)','6/15(五)'];
 const PRICE=CFG.price,DISC=CFG.discount;
 const SEGS=['19-20','20-21'];
 const SEG_LABEL={'19-20':'前段 19—20','20-21':'後段 20—21'};
@@ -458,7 +458,7 @@ if(sessionStorage.getItem('adminAuth')==='1'){
 }
 
 // ↓↓↓ 把你的 Apps Script 網址貼在這裡可以省去每次輸入（選填）↓↓↓
-let SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrxTlaoBOVqh-EIJovrnqZL0UQ7wd-9ksaqewEGyVI7lWiwRuwCJEHkFFQZGSKPzFU6g/exec';
+let SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwlToLX-UvmBuHsSovfOyER1D0EojIfODv8ZY28b8X8l7efz_UBX7P2jMjHpvzY2tvJ/exec';
 // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 // schedule[dayIdx] = {bed: {segment: {name, gender}}}
